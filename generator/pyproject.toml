@@ -7,7 +7,7 @@ name = "priority-sim"
 version = "0.1.0"
 description = "Synthetic Priority Matrix users: simulated event logs with planted habits"
 requires-python = ">=3.9"
-dependencies = ["pyyaml>=6.0,<7"]
+dependencies = ["pyyaml>=6.0,<7", "jsonschema>=4.21,<5"]
 
 [project.scripts]
 priority-sim = "priority_sim.cli:main"

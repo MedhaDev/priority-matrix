@@ -1,1 +1,2 @@
 pyyaml>=6.0,<7
+jsonschema>=4.21,<5   # used at runtime to validate events against the contract

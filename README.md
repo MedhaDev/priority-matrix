@@ -3,7 +3,7 @@
 **An Eisenhower Matrix + Pomodoro app that records how I actually prioritize, and the data
 pipeline that analyzes it.**
 
-**Live app:** https://statuesque-blancmange-e427de.netlify.app · **Case study:** [docs/case-study.md](docs/case-study.md)
+**Live app:** https://task-priority-tracker.netlify.app · **Case study:** [docs/case-study.md](docs/case-study.md)
 
 I suspected two things about how I work: that urgent-important tasks eat the focus meant for
 important-not-urgent ones, and that much of what I label "urgent" stops being urgent within days.

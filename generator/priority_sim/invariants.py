@@ -195,7 +195,7 @@ def check(events: Iterable[Dict[str, Any]], *, schema: bool = True) -> List[Viol
 
 @lru_cache(maxsize=1)
 def _validator():
-    from jsonschema import Draft202012Validator, FormatChecker   # dev dependency, only needed here
+    from jsonschema import Draft202012Validator, FormatChecker
     return Draft202012Validator(json.loads(SCHEMA_PATH.read_text()), format_checker=FormatChecker())
 
 
