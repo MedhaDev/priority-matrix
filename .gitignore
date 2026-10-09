@@ -1,0 +1,50 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env
+
+# Python (generator/)
+.venv
+__pycache__/
+*.pyc
+.pytest_cache/
+# Generated data: always reproducible from the persona + seed
+generator/data/
+
+# Warehouse (local DuckDB file, dbt build output, answer-key seeds are regenerated)
+warehouse/*.duckdb
+warehouse/*.duckdb.wal
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+dbt/seeds/*.csv
+dbt/.user.yml
+exports/
+*.egg-info/
+
+# Airflow local state
+airflow/.home/
+
+# Generated weekly reviews (synthetic data; regenerate any time)
+reviews/

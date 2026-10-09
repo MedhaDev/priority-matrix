@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction 3 — Canvas</title>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fragment+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ece8df;
+    --paper: #faf8f3;
+    --ink: #1b1a18;
+    --muted: #6c675e;
+    --faint: #a39d92;
+    --line: rgba(27,26,24,.13);
+    --do: #d24a2a;
+    --schedule: #2f5fc4;
+    --delegate: #e2b23c;
+    --eliminate: #4a4843;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 500 16px/1.45 "Cabinet Grotesk", system-ui, sans-serif; -webkit-font-smoothing: antialiased; border-top: 3px solid var(--ink); }
+  .mono { font-family: "Fragment Mono", ui-monospace, monospace; font-weight: 400; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 36px; }
+
+  header { display: flex; justify-content: space-between; align-items: center; padding: 26px 0; }
+  .mark { font-weight: 800; font-size: 21px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+  .mark i { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 18px; height: 18px; }
+  .mark i b { border-radius: 1.5px; }
+  nav { display: flex; gap: 8px; }
+  nav button { font-family: "Fragment Mono", monospace; font-size: 14px; padding: 9px 18px; border-radius: 999px; border: 1.5px solid var(--line); color: var(--muted); }
+  nav button.on { border-color: var(--ink); color: var(--ink); }
+
+  .hero { display: grid; grid-template-columns: 560px 1fr; gap: 72px; align-items: center; padding: 18px 0 56px; }
+  .canvas { background: var(--paper); box-shadow: 0 30px 60px -28px rgba(27,26,24,.35), 0 2px 6px rgba(27,26,24,.06); aspect-ratio: 1; position: relative; }
+  .canvas svg { width: 100%; height: 100%; display: block; }
+  .canvas .lbl { position: absolute; font-family: "Fragment Mono", monospace; font-size: 11px; color: var(--faint); }
+  .legend { margin-top: 16px; font-size: 12px; color: var(--muted); display: flex; gap: 18px; }
+
+  .eyebrow { font-size: 13px; letter-spacing: .28em; color: var(--muted); }
+  h1 { font-weight: 800; font-size: 128px; line-height: .86; letter-spacing: -0.055em; margin: 18px 0 30px; }
+  .copy { font-size: 16px; line-height: 1.75; color: #34322e; max-width: 440px; }
+  .copy b { font-weight: 400; color: var(--ink); background: linear-gradient(transparent 60%, rgba(210,74,42,.22) 60%); }
+  .ctas { display: flex; align-items: center; gap: 22px; margin-top: 34px; }
+  .cta { display: inline-flex; align-items: center; gap: 28px; background: #2e2c29; color: #f4f1ea; padding: 17px 26px 20px 30px; border-radius: 999px; font-weight: 800; font-size: 20px; letter-spacing: -0.02em; box-shadow: inset 0 -5px 0 rgba(0,0,0,.45); }
+  .ghost { font-family: "Fragment Mono", monospace; font-size: 14px; color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+
+  .list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; padding: 30px 0 20px; border-top: 1.5px solid var(--ink); }
+  .col h3 { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -0.03em; margin-bottom: 4px; }
+  .col h3 .sw { width: 12px; height: 12px; border-radius: 3px; }
+  .col .sub { font-size: 12px; color: var(--faint); margin-bottom: 14px; }
+  .item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-top: 1px solid var(--line); font-size: 15.5px; line-height: 1.35; }
+  .item .c { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid var(--ink); flex-shrink: 0; margin-top: 2px; display: grid; place-items: center; }
+  .item.done { color: var(--faint); }
+  .item.done .c { background: var(--ink); }
+  .item.done .c::after { content: ""; width: 3.5px; height: 7px; border: solid var(--paper); border-width: 0 1.6px 1.6px 0; transform: rotate(45deg) translate(-.5px, -.5px); }
+  .item.done span:not(.c) { text-decoration: line-through; }
+  .item small { display: block; font-family: "Fragment Mono", monospace; font-size: 11px; color: var(--faint); margin-top: 2px; text-decoration: none; }
+
+  footer { display: flex; justify-content: space-between; align-items: center; padding: 32px 0 34px; font-size: 13px; color: var(--muted); }
+  footer .dots { display: flex; gap: 5px; align-items: center; }
+  footer .dots i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+  footer nav { gap: 26px; }
+  footer nav a { font-family: "Fragment Mono", monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><i><b style="background:var(--do)"></b><b style="background:var(--schedule)"></b><b style="background:var(--delegate)"></b><b style="background:var(--eliminate)"></b></i>priority matrix</div>
+    <nav><button class="on">today</button><button>patterns</button><button>about</button></nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="canvas" id="canvas">
+        <span class="lbl" style="left:14px;top:12px">do first</span>
+        <span class="lbl" style="right:14px;top:12px">schedule</span>
+        <span class="lbl" style="left:14px;bottom:12px">delegate</span>
+        <span class="lbl" style="right:14px;bottom:12px">eliminate</span>
+      </div>
+      <div class="legend mono"><span>last 30 days · one mark per task</span><span>pale = unfinished</span><span>bigger = more focus</span></div>
+    </div>
+    <div>
+      <span class="eyebrow mono">DAY 41 · THU 08 OCT</span>
+      <h1>Thursday</h1>
+      <p class="copy mono">
+        Nine tasks, three done. <b>75 minutes</b> of focus, almost all of it on do first.
+        The schedule corner is still pale. It hasn't been touched since Monday.
+      </p>
+      <div class="ctas">
+        <button class="cta">start focusing <span>→</span></button>
+        <button class="ghost">+ add a task</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="list">
+    <div class="col">
+      <h3><span class="sw" style="background:var(--do)"></span>Do first</h3><div class="sub mono">urgent · important</div>
+      <div class="item"><span class="c"></span><span>Fix broken survey export<small>50 min focused</small></span></div>
+      <div class="item"><span class="c"></span><span>Prep slides for 2pm review<small>carried 2 days</small></span></div>
+      <div class="item done"><span class="c"></span><span>Send numbers to finance</span></div>
+    </div>
+    <div class="col">
+      <h3><span class="sw" style="background:var(--schedule)"></span>Schedule</h3><div class="sub mono">important</div>
+      <div class="item"><span class="c"></span><span>Read dbt docs: incremental models<small>carried 4 days</small></span></div>
+      <div class="item"><span class="c"></span><span>Draft portfolio case study</span></div>
+      <div class="item"><span class="c"></span><span>Plan Saturday hike</span></div>
+    </div>
+    <div class="col">
+      <h3><span class="sw" style="background:var(--delegate)"></span>Delegate</h3><div class="sub mono">urgent</div>
+      <div class="item"><span class="c"></span><span>Book a room for the meetup<small>moved from do first</small></span></div>
+      <div class="item done"><span class="c"></span><span>Ask IT about database access</span></div>
+    </div>
+    <div class="col">
+      <h3><span class="sw" style="background:var(--eliminate)"></span>Eliminate</h3><div class="sub mono">neither</div>
+      <div class="item done"><span class="c"></span><span>Reorganize Notion (again)</span></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="dots"><i style="background:var(--do)"></i><i style="background:var(--schedule)"></i><i style="background:var(--delegate)"></i><span class="mono" style="margin-left:8px">saved on this device</span></div>
+    <nav><a>export</a><a>demo data</a><a>a project by medha</a></nav>
+  </footer>
+</div>
+
+<script>
+// Paint the last 30 days: every task is one brush mark (a bundle of slightly
+// curved parallel strokes) in its quadrant. Solid = done, pale = never finished,
+// bigger = more focus time. The crowded corner IS hypothesis 1.
+let seed = 11;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
+const COLORS = { do: "#d24a2a", schedule: "#2f5fc4", delegate: "#e2b23c", eliminate: "#4a4843" };
+const ORIGIN = { do: [0, 0], schedule: [1, 0], delegate: [0, 1], eliminate: [1, 1] };
+const MIX = [["do", 64], ["schedule", 26], ["delegate", 30], ["eliminate", 18]];
+const DONE = { do: 0.85, schedule: 0.45, delegate: 0.7, eliminate: 0.5 };
+const FOCUS = { do: 0.7, schedule: 0.3, delegate: 0.1, eliminate: 0.05 };
+
+const TASKS = [];
+for (const [q, n] of MIX) for (let i = 0; i < n; i++) {
+  TASKS.push({ q, done: rnd() < DONE[q], focus: rnd() < FOCUS[q] ? 25 * (1 + Math.floor(rnd() * 2.2)) : 0 });
+}
+
+const S = 600, H = S / 2, PAD = 34, NS = "http://www.w3.org/2000/svg";
+const svg = document.createElementNS(NS, "svg");
+svg.setAttribute("viewBox", `0 0 ${S} ${S}`);
+svg.innerHTML = `<path d="M${H} 14V${S - 14}M14 ${H}H${S - 14}" stroke="#1b1a18" stroke-opacity=".1"/>`;
+
+const placed = [];
+for (const t of TASKS) {
+  const [ox, oy] = ORIGIN[t.q];
+  const size = 26 + t.focus * 0.42 + rnd() * 8;
+  let cx, cy, tries = 0;
+  do {
+    cx = ox * H + PAD + rnd() * (H - 2 * PAD);
+    cy = oy * H + PAD + 8 + rnd() * (H - 2 * PAD - 8);
+    tries++;
+  } while (tries < 40 && placed.some((p) => Math.hypot(p.x - cx, p.y - cy) < (p.s + size) * 0.42));
+  placed.push({ x: cx, y: cy, s: size });
+
+  const g = document.createElementNS(NS, "g");
+  g.setAttribute("transform", `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${((rnd() - 0.5) * 70).toFixed(1)})`);
+  const lines = Math.max(4, Math.round(size / 4));
+  let d = "";
+  for (let i = 0; i < lines; i++) {
+    const y = -size / 2 + (i + 0.5) * (size / lines);
+    const x1 = -size / 2 + rnd() * 5, x2 = size / 2 - rnd() * 5, bend = (rnd() - 0.3) * 6;
+    d += `<path d="M${x1.toFixed(1)} ${y.toFixed(1)}Q0 ${(y + bend).toFixed(1)} ${x2.toFixed(1)} ${(y + rnd() * 2).toFixed(1)}" stroke-opacity="${(0.5 + rnd() * 0.5).toFixed(2)}"/>`;
+  }
+  g.innerHTML = d;
+  g.setAttribute("stroke", COLORS[t.q]);
+  g.setAttribute("stroke-width", "3");
+  g.setAttribute("stroke-linecap", "round");
+  g.setAttribute("fill", "none");
+  if (!t.done) g.setAttribute("opacity", "0.26");
+  svg.appendChild(g);
+}
+document.getElementById("canvas").prepend(svg);
+</script>
+</body>
+</html>

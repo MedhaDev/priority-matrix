@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MedhaDev/priority-matrix/contracts/event.v1.schema.json",
+  "title": "Priority Matrix event (v1)",
+  "description": "One user action. Shared contract between the app (src/lib/events.js), the synthetic generator (generator/) and the dbt models. Human-readable version: docs/event-schema.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id", "schema_version", "event_type", "task_id", "quadrant", "from_quadrant",
+    "pomodoro_id", "payload", "occurred_at", "local_date", "timezone", "source"
+  ],
+  "$defs": {
+    "uuid": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+    "quadrant": { "enum": ["do", "schedule", "delegate", "eliminate"] },
+    "secs": { "type": "integer", "minimum": 0 }
+  },
+  "properties": {
+    "event_id": { "$ref": "#/$defs/uuid" },
+    "schema_version": { "const": 1 },
+    "event_type": {
+      "enum": [
+        "task_created", "task_edited", "task_moved", "task_completed", "task_reopened",
+        "task_deleted", "task_carried_over",
+        "pomodoro_started", "pomodoro_paused", "pomodoro_resumed",
+        "pomodoro_finished", "pomodoro_abandoned"
+      ]
+    },
+    "task_id": { "anyOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+    "quadrant": { "anyOf": [{ "$ref": "#/$defs/quadrant" }, { "type": "null" }] },
+    "from_quadrant": { "anyOf": [{ "$ref": "#/$defs/quadrant" }, { "type": "null" }] },
+    "pomodoro_id": { "anyOf": [{ "$ref": "#/$defs/uuid" }, { "type": "null" }] },
+    "payload": { "type": "object" },
+    "occurred_at": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:\\d{2})$" },
+    "local_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "timezone": { "type": "string", "minLength": 1 },
+    "source": { "enum": ["app", "backfill", "demo", "synthetic"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "event_type": { "const": "task_moved" } } },
+      "then": { "properties": { "from_quadrant": { "$ref": "#/$defs/quadrant" }, "quadrant": { "$ref": "#/$defs/quadrant" } } },
+      "else": { "properties": { "from_quadrant": { "const": null } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "enum": ["task_created", "task_edited", "task_moved", "task_completed", "task_reopened", "task_deleted", "task_carried_over"] } } },
+      "then": { "properties": { "task_id": { "$ref": "#/$defs/uuid" }, "quadrant": { "$ref": "#/$defs/quadrant" } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "pattern": "^pomodoro_" } } },
+      "then": { "properties": { "pomodoro_id": { "$ref": "#/$defs/uuid" } } },
+      "else": { "properties": { "pomodoro_id": { "const": null } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "task_created" } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["text", "date"], "properties": { "text": { "type": "string", "minLength": 1 }, "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" } } } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "task_edited" } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["old_text", "new_text"] } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "task_carried_over" } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["from_date", "to_date"] } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "const": "pomodoro_started" } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["planned_secs"], "properties": { "planned_secs": { "$ref": "#/$defs/secs" } } } } }
+    },
+    {
+      "if": { "properties": { "event_type": { "enum": ["pomodoro_finished", "pomodoro_abandoned"] } } },
+      "then": { "properties": { "payload": { "type": "object", "required": ["focused_secs", "planned_secs"], "properties": { "focused_secs": { "$ref": "#/$defs/secs" }, "planned_secs": { "$ref": "#/$defs/secs" } } } } }
+    }
+  ]
+}

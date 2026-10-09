@@ -1,0 +1,14 @@
+version: 2
+
+# Written by the generator (python -m priority_sim --seeds-dir ../dbt/seeds).
+# The answer key for reconciliation tests; regenerated with the data, never edited by hand.
+seeds:
+  - name: truth_daily_focus
+    config:
+      column_types: {local_date: date, quadrant: varchar(16), focused_secs: bigint, sessions: integer}
+  - name: truth_summary
+    config:
+      column_types: {metric: varchar(64), value: double precision}
+  - name: expected_quarantine
+    config:
+      column_types: {event_id: varchar(64), how: varchar(64)}

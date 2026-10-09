@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: stg_events__validated
+    description: Every delivered row, parsed, with invalid_reason (null = matches the event contract).
+  - name: stg_events
+    description: >
+      Clean, typed, deduplicated events (one row per event_id). Timestamps without an
+      offset are repaired using the event's timezone. Incremental with a lookback window.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: event_type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [task_created, task_edited, task_moved, task_completed, task_reopened, task_deleted,
+                         task_carried_over, pomodoro_started, pomodoro_paused, pomodoro_resumed,
+                         pomodoro_finished, pomodoro_abandoned]
+      - name: quadrant
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [do, schedule, delegate, eliminate]
+      - name: occurred_at
+        data_tests: [not_null]
+      - name: local_date
+        data_tests: [not_null]
+  - name: stg_events__quarantine
+    description: Rows that break the contract. Kept for inspection, excluded from every model.
+    columns:
+      - name: invalid_reason
+        data_tests: [not_null]

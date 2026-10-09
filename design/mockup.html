@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Priority Matrix — mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Hanken+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1919;
+    --ink-soft: #1a1919b3;
+    --ink-faint: #1a191966;
+    --line: rgba(26,25,25,0.14);
+    --paper: #eae8e3;
+    --pill-bg: #d2d1ca;
+
+    /* one portfolio page colour per quadrant */
+    --q-do: #f2e3dc;         /* work page: warm peach */
+    --q-schedule: #dfe3ea;   /* fun page: cool blue-grey */
+    --q-delegate: #e6e1e6;   /* about page: mauve */
+    --q-eliminate: #dedbd3;  /* home paper, one step darker */
+
+    /* small saturated dots so quadrants stay distinguishable at a glance */
+    --dot-do: #c8553d;
+    --dot-schedule: #4a6fa5;
+    --dot-delegate: #8a6a8e;
+    --dot-eliminate: #8c8a82;
+
+    --mono: 'Fira Mono', ui-monospace, Menlo, monospace;
+    --sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --shadow: 0 0.75rem 1.5rem rgba(26,25,25,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { overflow-x: clip; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.6;
+    border-top: 3px solid var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; background: none; border: none; }
+
+  .page { max-width: 1240px; margin: 0 auto; padding: 0 max(16px, 2.5vw); }
+
+  /* ── header ── */
+  header { display: flex; justify-content: space-between; align-items: flex-start; padding: 28px 0 8px; gap: 16px; }
+  .wordmark { font-family: var(--sans); font-weight: 900; font-size: 22px; line-height: 0.95; letter-spacing: -0.01em; text-transform: uppercase; }
+  .wordmark span { display: block; }
+  .wordmark span:nth-child(2) { color: #3a3836; }
+  nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+  .nav-pill { border: 1.5px solid var(--line); border-radius: 999px; padding: 9px 20px; color: var(--ink-soft); font-size: 14px; }
+  .nav-pill.active { border-color: var(--ink); color: var(--ink); }
+
+  /* ── hero ── */
+  .hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: end; padding: 48px 0 32px; }
+  .eyebrow { font-size: 12px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--ink-soft); }
+  h1 { font-family: var(--sans); font-weight: 900; font-size: clamp(48px, 7.5vw, 104px); line-height: 0.9; letter-spacing: -0.045em; margin-top: 14px; }
+  .date-nav { display: inline-flex; align-items: center; gap: 4px; }
+  .date-nav button { width: 28px; height: 28px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 13px; line-height: 1; }
+  .date-nav .eyebrow { margin: 0 10px; color: var(--ink); }
+  .summary { font-size: 15px; line-height: 1.75; color: var(--ink); max-width: 400px; }
+  .summary b { font-weight: 500; background: linear-gradient(transparent 62%, var(--q-do) 62%); }
+
+  /* ── add bar ── */
+  .add { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 10px 10px 10px 22px; border: 1.5px solid var(--ink); border-radius: 999px; background: #f4f2ee; margin-bottom: 28px; }
+  .add input { flex: 1; min-width: 160px; border: none; background: transparent; font: inherit; font-size: 15px; color: var(--ink); outline: none; }
+  .add input::placeholder { color: var(--ink-faint); }
+  .toggle { border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 13px; color: var(--ink-soft); }
+  .toggle.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .cta {
+    display: inline-flex; align-items: center; gap: 18px;
+    background: #2f2d2b; color: #f4f2ee; border-radius: 999px;
+    padding: 12px 22px 14px 26px;
+    font-family: var(--sans); font-weight: 800; font-size: 16px; letter-spacing: -0.02em;
+    box-shadow: inset 0 -4px 0 rgba(0,0,0,0.45);
+  }
+  .cta:active { transform: translateY(2px); box-shadow: inset 0 -2px 0 rgba(0,0,0,0.45); }
+  .lands { font-size: 12px; color: var(--ink-soft); white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+
+  /* ── matrix ── */
+  .axes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 8px; }
+  .axes .eyebrow { font-size: 11px; }
+  .matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .quad { border-radius: 6px; padding: 22px 22px 14px; box-shadow: var(--shadow); min-height: 260px; display: flex; flex-direction: column; }
+  .quad.do { background: var(--q-do); }
+  .quad.schedule { background: var(--q-schedule); }
+  .quad.delegate { background: var(--q-delegate); }
+  .quad.eliminate { background: var(--q-eliminate); }
+  .quad-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .quad-head .eyebrow { font-size: 11px; letter-spacing: 0.26em; }
+  .quad h2 { font-family: var(--sans); font-weight: 900; font-size: 34px; letter-spacing: -0.04em; line-height: 1; margin-top: 8px; }
+  .count { font-family: var(--sans); font-weight: 800; font-size: 15px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .task { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); position: relative; }
+  .check { width: 16px; height: 16px; margin-top: 2px; border: 1.5px solid var(--ink); border-radius: 3px; flex-shrink: 0; display: grid; place-items: center; font-size: 10px; }
+  .task.done .check { background: var(--ink); color: var(--paper); }
+  .task.done .t-text { text-decoration: line-through; color: var(--ink-faint); }
+  .t-body { flex: 1; min-width: 0; }
+  .t-text { font-size: 14px; line-height: 1.45; }
+  .meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 1px 9px; border-radius: 999px; background: rgba(26,25,25,0.07); color: var(--ink-soft); }
+  .chip.carried { background: transparent; border: 1px dashed var(--ink-faint); }
+  .bar { height: 3px; border-radius: 2px; background: rgba(26,25,25,0.1); margin-top: 8px; max-width: 180px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--ink); }
+  .t-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .focus-btn { border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 12px; }
+  .more { width: 26px; height: 26px; border-radius: 999px; font-size: 16px; line-height: 1; color: var(--ink-soft); }
+  .more:hover, .more.open { background: rgba(26,25,25,0.08); color: var(--ink); }
+
+  /* tap-to-move popover (replaces drag-only on phones) */
+  .move { position: absolute; right: 0; top: 44px; z-index: 5; background: #f8f7f4; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 10px 28px rgba(26,25,25,0.18); padding: 6px; min-width: 210px; }
+  .move p { font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--ink-soft); padding: 6px 10px 4px; }
+  .move button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 8px 10px; border-radius: 6px; font-size: 13px; }
+  .move button:hover { background: rgba(26,25,25,0.06); }
+  .move button.current { color: var(--ink-faint); }
+  .move hr { border: none; border-top: 1px solid var(--line); margin: 4px 6px; }
+
+  .empty { color: var(--ink-faint); font-size: 13px; padding: 14px 0; border-top: 1px solid var(--line); }
+
+  /* ── focus overlay (shown inline for the mockup) ── */
+  .state-label { margin: 64px 0 14px; display: flex; align-items: center; gap: 14px; }
+  .state-label::after { content: ""; flex: 1; border-top: 1px dashed var(--ink-faint); }
+  .focus { background: var(--ink); color: var(--paper); border-radius: 8px; padding: 56px 24px; text-align: center; }
+  .focus .eyebrow { color: #eae8e399; }
+  .focus .task-name { font-size: 16px; margin: 18px auto 6px; max-width: 460px; }
+  .focus .where { font-size: 12px; color: #eae8e399; display: inline-flex; gap: 8px; align-items: center; }
+  .timer { font-family: var(--sans); font-weight: 900; font-size: clamp(96px, 18vw, 200px); letter-spacing: -0.06em; line-height: 0.9; margin: 26px 0 30px; font-variant-numeric: tabular-nums; }
+  .progress { max-width: 420px; height: 3px; background: #eae8e322; margin: 0 auto 32px; border-radius: 2px; overflow: hidden; }
+  .progress i { display: block; width: 3%; height: 100%; background: var(--q-do); }
+  .focus-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .focus .cta { background: var(--paper); color: var(--ink); box-shadow: inset 0 -4px 0 rgba(0,0,0,0.18); }
+  .ghost { border: 1.5px solid #eae8e344; border-radius: 999px; padding: 11px 22px; color: #eae8e3cc; }
+
+  /* ── footer ── */
+  footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding: 48px 0 28px; font-size: 13px; color: var(--ink-soft); }
+  .status { display: flex; align-items: center; gap: 12px; }
+  .status .dots { display: flex; gap: 5px; }
+  .status .dots .dot { width: 14px; height: 14px; }
+  .links { display: flex; gap: 22px; flex-wrap: wrap; }
+  .links a { color: inherit; text-decoration: none; }
+  .links a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* ── phone ── */
+  @media (max-width: 760px) {
+    body { font-size: 13px; }
+    header { padding-top: 20px; }
+    .wordmark { font-size: 18px; }
+    .nav-pill { padding: 7px 14px; font-size: 13px; }
+    .hero { grid-template-columns: 1fr; gap: 20px; padding: 32px 0 24px; }
+    .add { border-radius: 18px; padding: 12px; }
+    .add input { flex-basis: 100%; padding: 4px 6px 8px; }
+    .add .cta { margin-left: auto; }
+    .lands { display: none; }
+    .axes { display: none; }
+    .matrix { grid-template-columns: 1fr; gap: 12px; }
+    .quad { min-height: 0; padding: 18px 16px 8px; }
+    .quad h2 { font-size: 28px; }
+    .focus-btn { padding: 3px 10px; }
+    .move { right: -4px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="wordmark"><span>Priority</span><span>Matrix</span></div>
+    <nav>
+      <a class="nav-pill active">matrix</a>
+      <a class="nav-pill">focus</a>
+      <a class="nav-pill">patterns</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="date-nav">
+        <button aria-label="Previous day">‹</button>
+        <span class="eyebrow">Thu · Oct 08</span>
+        <button aria-label="Next day">›</button>
+      </div>
+      <h1>What needs your attention?</h1>
+    </div>
+    <p class="summary">
+      9 tasks today, 3 done. <b>75 minutes</b> of focus so far, almost all of it on <b>do first</b>. Your schedule quadrant hasn't been touched since Monday.
+    </p>
+  </section>
+
+  <div class="add">
+    <input placeholder="Add a task…" value="Draft the event schema for the generator" />
+    <button class="toggle">urgent</button>
+    <button class="toggle on">important</button>
+    <span class="lands"><span class="dot" style="background:var(--dot-schedule)"></span>→ schedule</span>
+    <button class="cta">add task <span>→</span></button>
+  </div>
+
+  <div class="axes">
+    <span class="eyebrow">↓ urgent</span>
+    <span class="eyebrow">↓ not urgent</span>
+  </div>
+
+  <div class="matrix">
+
+    <!-- DO FIRST -->
+    <section class="quad do">
+      <div class="quad-head">
+        <div>
+          <span class="eyebrow">01 · urgent × important</span>
+          <h2>Do first</h2>
+        </div>
+        <span class="count"><span class="dot" style="background:var(--dot-do)"></span>1/3</span>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body">
+          <div class="t-text">Clean cohort 3 survey export</div>
+          <div class="meta"><span class="chip">◎ 2 · 50 min</span><span class="chip">2/3 subtasks</span></div>
+          <div class="bar"><i style="width:66%"></i></div>
+        </div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more">⋯</button></div>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body">
+          <div class="t-text">Send cost-benefit numbers to the partner orgs</div>
+          <div class="meta"><span class="chip carried">carried · day 3</span><span class="chip">◎ 1 · 25 min</span></div>
+        </div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more open">⋯</button></div>
+        <div class="move">
+          <p>Move to</p>
+          <button class="current"><span class="dot" style="background:var(--dot-do)"></span>Do first · current</button>
+          <button><span class="dot" style="background:var(--dot-schedule)"></span>Schedule</button>
+          <button><span class="dot" style="background:var(--dot-delegate)"></span>Delegate</button>
+          <button><span class="dot" style="background:var(--dot-eliminate)"></span>Eliminate</button>
+          <hr />
+          <button>Move to tomorrow</button>
+          <button>Edit</button>
+          <button style="color:#a8432f">Delete</button>
+        </div>
+      </div>
+      <div class="task done">
+        <span class="check">✓</span>
+        <div class="t-body">
+          <div class="t-text">Submit timesheet</div>
+          <div class="meta"><span class="chip">done 9:14am</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="quad schedule">
+      <div class="quad-head">
+        <div>
+          <span class="eyebrow">02 · important</span>
+          <h2>Schedule</h2>
+        </div>
+        <span class="count"><span class="dot" style="background:var(--dot-schedule)"></span>0/3</span>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body">
+          <div class="t-text">Read dbt docs: incremental models</div>
+          <div class="meta"><span class="chip carried">carried · day 4</span></div>
+        </div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more">⋯</button></div>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body"><div class="t-text">Draft the Priority Matrix case study</div></div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more">⋯</button></div>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body"><div class="t-text">Plan Saturday hike</div></div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more">⋯</button></div>
+      </div>
+    </section>
+
+    <!-- DELEGATE -->
+    <section class="quad delegate">
+      <div class="quad-head">
+        <div>
+          <span class="eyebrow">03 · urgent</span>
+          <h2>Delegate</h2>
+        </div>
+        <span class="count"><span class="dot" style="background:var(--dot-delegate)"></span>1/2</span>
+      </div>
+      <div class="task">
+        <span class="check"></span>
+        <div class="t-body">
+          <div class="t-text">Book a room for the user group meetup</div>
+          <div class="meta"><span class="chip">moved from do first</span></div>
+        </div>
+        <div class="t-actions"><button class="focus-btn">focus</button><button class="more">⋯</button></div>
+      </div>
+      <div class="task done">
+        <span class="check">✓</span>
+        <div class="t-body">
+          <div class="t-text">Ask IT about RDS access</div>
+          <div class="meta"><span class="chip">done 11:02am</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ELIMINATE -->
+    <section class="quad eliminate">
+      <div class="quad-head">
+        <div>
+          <span class="eyebrow">04 · neither</span>
+          <h2>Eliminate</h2>
+        </div>
+        <span class="count"><span class="dot" style="background:var(--dot-eliminate)"></span>1/1</span>
+      </div>
+      <div class="task done">
+        <span class="check">✓</span>
+        <div class="t-body">
+          <div class="t-text">Reorganize Notion (again)</div>
+          <div class="meta"><span class="chip">dropped</span></div>
+        </div>
+      </div>
+      <div class="empty">Nothing else here. Good.</div>
+    </section>
+
+  </div>
+
+  <!-- second state: focus mode -->
+  <div class="state-label"><span class="eyebrow">mockup · focus mode</span></div>
+  <section class="focus">
+    <span class="eyebrow">Focus session · 2 of today</span>
+    <p class="task-name">Clean cohort 3 survey export</p>
+    <span class="where"><span class="dot" style="background:var(--dot-do)"></span>do first</span>
+    <div class="timer">24:12</div>
+    <div class="progress"><i></i></div>
+    <div class="focus-actions">
+      <button class="cta">pause <span>‖</span></button>
+      <button class="ghost">finish early</button>
+      <button class="ghost">abandon</button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="status">
+      <span class="dots">
+        <span class="dot" style="background:var(--dot-do)"></span>
+        <span class="dot" style="background:var(--dot-schedule)"></span>
+        <span class="dot" style="background:var(--dot-delegate)"></span>
+        <span class="dot" style="background:var(--dot-eliminate)"></span>
+      </span>
+      <span>3 of 9 done · 75 min focused</span>
+    </div>
+    <div class="links">
+      <a href="#">export data</a>
+      <a href="#">load demo data</a>
+      <a href="#">how it works</a>
+      <a href="#">a project by medha</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

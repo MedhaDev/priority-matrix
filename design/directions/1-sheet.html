@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction 1 — Sheet</title>
+<link href="https://api.fontshare.com/v2/css?f[]=switzer@400,500,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f2ee;
+    --sheet: #fcfbf8;
+    --ink: #1c1b19;
+    --muted: #6e6b65;
+    --faint: #a6a39c;
+    --rule: #e4e1da;
+    --hover: #f3f1ec;
+    --do: #d4512f;
+    --schedule: #3d68c2;
+    --delegate: #9165a8;
+    --eliminate: #9b988f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font: 400 14.5px/1.5 "Switzer", system-ui, sans-serif; -webkit-font-smoothing: antialiased; font-feature-settings: "tnum" 1; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  svg { display: block; flex-shrink: 0; }
+  .ico { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+
+  /* top bar */
+  .top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+  .logo { width: 20px; height: 20px; }
+  .date { display: flex; align-items: center; gap: 6px; }
+  .date .day { font-weight: 600; letter-spacing: -0.01em; }
+  .date .muted { color: var(--muted); }
+  .icon-btn { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 7px; color: var(--muted); }
+  .icon-btn:hover { background: #e9e7e1; color: var(--ink); }
+  .right { display: flex; justify-content: flex-end; align-items: center; gap: 4px; }
+  .tab { padding: 6px 12px; border-radius: 7px; color: var(--muted); font-weight: 500; }
+  .tab.active { color: var(--ink); background: #e9e7e1; }
+  .primary { display: flex; align-items: center; gap: 8px; margin-left: 10px; height: 34px; padding: 0 12px 0 11px; border-radius: 8px; background: var(--ink); color: #fff; font-weight: 500; box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 1px 2px rgba(0,0,0,.2); }
+  .primary .ico { width: 14px; height: 14px; fill: currentColor; stroke: none; }
+  kbd { font: 500 11px/1 "Switzer", sans-serif; padding: 3px 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,.25); color: rgba(255,255,255,.7); }
+
+  /* summary */
+  .intro { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; padding: 36px 0 18px; }
+  .summary { font-size: 26px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.25; max-width: 640px; }
+  .summary .soft { color: var(--faint); }
+  .nudge { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.5px; white-space: nowrap; }
+  .sq { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+
+  /* add */
+  .add { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 8px 0 16px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 1px 2px rgba(28,27,25,.04); margin-bottom: 28px; }
+  .add .ico { color: var(--faint); }
+  .add input { flex: 1; border: 0; outline: 0; background: transparent; font: inherit; font-size: 15px; color: var(--ink); }
+  .add input::placeholder { color: var(--faint); }
+  .seg { display: flex; padding: 2px; background: #efede8; border-radius: 7px; }
+  .seg button { padding: 4px 10px; border-radius: 5px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .seg button.on { background: var(--sheet); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .lands { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; padding: 0 6px; }
+  .enter { font-size: 11px; color: var(--faint); border: 1px solid var(--rule); border-radius: 4px; padding: 2px 6px; margin-right: 6px; }
+
+  /* matrix */
+  .matrix { display: grid; grid-template-columns: 22px 1fr; grid-template-rows: 26px 1fr; }
+  .axis-top { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .axis-top span { padding-left: 20px; }
+  .axis-left { grid-row: 2; display: grid; grid-template-rows: 1fr 1fr; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .axis-left span { writing-mode: vertical-rl; transform: rotate(180deg); text-align: right; padding-bottom: 20px; }
+  .sheet { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: 1fr 1fr; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; box-shadow: 0 1px 2px rgba(28,27,25,.04), 0 8px 24px -12px rgba(28,27,25,.08); overflow: hidden; }
+  .q { padding: 16px 12px 14px; min-height: 248px; }
+  .q:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .q:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+  .q-head { display: flex; align-items: center; gap: 9px; padding: 0 8px 10px; }
+  .q-head h3 { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .q-head .count { color: var(--faint); font-size: 13px; }
+  .q-head .icon-btn { margin-left: auto; width: 24px; height: 24px; }
+
+  .task { display: flex; align-items: center; gap: 11px; height: 38px; padding: 0 8px; border-radius: 8px; position: relative; }
+  .task:hover { background: var(--hover); }
+  .chk { width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid #c9c6bf; display: grid; place-items: center; flex-shrink: 0; }
+  .task:hover .chk { border-color: var(--muted); }
+  .done .chk { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .done .chk .ico { width: 11px; height: 11px; stroke-width: 2.4; }
+  .text { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .done .text { color: var(--faint); text-decoration: line-through; text-decoration-color: #cfccc5; }
+  .meta { display: flex; align-items: center; gap: 12px; color: var(--faint); font-size: 12.5px; }
+  .meta span { display: flex; align-items: center; gap: 4px; }
+  .meta .ico { width: 13px; height: 13px; }
+  .meta .warn { color: #b0652d; }
+  .actions { display: none; gap: 2px; }
+  .task:hover .meta { display: none; }
+  .task:hover .actions { display: flex; }
+  .actions .icon-btn { width: 26px; height: 26px; }
+  .actions .play .ico { fill: currentColor; stroke: none; width: 12px; height: 12px; }
+
+  .foot { display: flex; justify-content: space-between; color: var(--faint); font-size: 12.5px; padding: 28px 0 40px; }
+  .foot nav { display: flex; gap: 20px; }
+
+  .note { position: fixed; bottom: 16px; left: 16px; background: var(--ink); color: #fff; font-size: 12px; padding: 8px 12px; border-radius: 8px; opacity: .85; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="play" viewBox="0 0 24 24"><path d="M7 4.8v14.4a.8.8 0 0 0 1.2.7l11.4-7.2a.8.8 0 0 0 0-1.4L8.2 4.1A.8.8 0 0 0 7 4.8z"/></symbol>
+  <symbol id="left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></symbol>
+  <symbol id="timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></symbol>
+  <symbol id="carry" viewBox="0 0 24 24"><path d="M4 7h11a5 5 0 0 1 0 10H8"/><path d="M11 13l-4 4 4 4"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 20 20"><rect x="1" y="1" width="8.2" height="8.2" rx="2" fill="#d4512f"/><rect x="10.8" y="1" width="8.2" height="8.2" rx="2" fill="#1c1b19"/><rect x="1" y="10.8" width="8.2" height="8.2" rx="2" fill="#1c1b19"/><rect x="10.8" y="10.8" width="8.2" height="8.2" rx="2" fill="#1c1b19" opacity=".25"/></svg>
+      Priority
+    </div>
+    <div class="date">
+      <button class="icon-btn"><svg class="ico"><use href="#left"/></svg></button>
+      <span class="day">Thursday</span><span class="muted">8 Oct</span>
+      <button class="icon-btn"><svg class="ico"><use href="#right"/></svg></button>
+    </div>
+    <div class="right">
+      <a class="tab active">Matrix</a>
+      <a class="tab">Patterns</a>
+      <button class="primary"><svg class="ico"><use href="#play"/></svg>Focus<kbd>F</kbd></button>
+    </div>
+  </header>
+
+  <section class="intro">
+    <p class="summary">3 of 9 done. 1h 15m focused today, <span class="soft">83% of it on Do first.</span></p>
+    <p class="nudge"><span class="sq" style="background:var(--schedule)"></span>Schedule hasn't had focus time since Monday</p>
+  </section>
+
+  <div class="add">
+    <svg class="ico"><use href="#plus"/></svg>
+    <input placeholder="Add a task" value="" />
+    <div class="seg"><button class="on">Urgent</button><button>Important</button></div>
+    <span class="lands"><span class="sq" style="background:var(--delegate)"></span>Delegate</span>
+    <span class="enter">↵</span>
+  </div>
+
+  <div class="matrix">
+    <div class="axis-top"><span>Urgent</span><span>Not urgent</span></div>
+    <div class="axis-left"><span>Important</span><span>Not important</span></div>
+    <div class="sheet">
+
+      <section class="q">
+        <div class="q-head"><span class="sq" style="background:var(--do)"></span><h3>Do first</h3><span class="count">1 / 3</span><button class="icon-btn"><svg class="ico"><use href="#plus"/></svg></button></div>
+        <div class="task"><span class="chk"></span><span class="text">Fix broken survey export</span>
+          <span class="meta"><span><svg class="ico"><use href="#timer"/></svg>50m</span></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+        <div class="task"><span class="chk"></span><span class="text">Prep slides for 2pm review</span>
+          <span class="meta"><span class="warn"><svg class="ico"><use href="#carry"/></svg>2d</span></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+        <div class="task done"><span class="chk"><svg class="ico"><use href="#check"/></svg></span><span class="text">Send numbers to finance</span>
+          <span class="meta"><span>9:58</span></span></div>
+      </section>
+
+      <section class="q">
+        <div class="q-head"><span class="sq" style="background:var(--schedule)"></span><h3>Schedule</h3><span class="count">0 / 3</span><button class="icon-btn"><svg class="ico"><use href="#plus"/></svg></button></div>
+        <div class="task"><span class="chk"></span><span class="text">Read dbt docs: incremental models</span>
+          <span class="meta"><span><svg class="ico"><use href="#timer"/></svg>25m</span><span class="warn"><svg class="ico"><use href="#carry"/></svg>4d</span></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+        <div class="task"><span class="chk"></span><span class="text">Draft portfolio case study</span>
+          <span class="meta"></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+        <div class="task"><span class="chk"></span><span class="text">Plan Saturday hike</span>
+          <span class="meta"></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+      </section>
+
+      <section class="q">
+        <div class="q-head"><span class="sq" style="background:var(--delegate)"></span><h3>Delegate</h3><span class="count">1 / 2</span><button class="icon-btn"><svg class="ico"><use href="#plus"/></svg></button></div>
+        <div class="task"><span class="chk"></span><span class="text">Book a room for the meetup</span>
+          <span class="meta"><span><svg class="ico"><use href="#down"/></svg>from Do first</span></span>
+          <span class="actions"><button class="icon-btn play"><svg class="ico"><use href="#play"/></svg></button><button class="icon-btn"><svg class="ico"><use href="#more"/></svg></button></span></div>
+        <div class="task done"><span class="chk"><svg class="ico"><use href="#check"/></svg></span><span class="text">Ask IT about database access</span>
+          <span class="meta"><span>11:02</span></span></div>
+      </section>
+
+      <section class="q">
+        <div class="q-head"><span class="sq" style="background:var(--eliminate)"></span><h3>Eliminate</h3><span class="count">1 / 1</span><button class="icon-btn"><svg class="ico"><use href="#plus"/></svg></button></div>
+        <div class="task done"><span class="chk"><svg class="ico"><use href="#check"/></svg></span><span class="text">Reorganize Notion (again)</span>
+          <span class="meta"><span>dropped</span></span></div>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span>Saved on this device · 214 events</span>
+    <nav><a>Export</a><a>Demo data</a><a>How it works</a><a>Medha Devalraj</a></nav>
+  </footer>
+</div>
+<div class="note">Hover a task to see its actions</div>
+</body>
+</html>

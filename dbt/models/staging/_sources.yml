@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Delivered event rows exactly as received, one row per line of each daily file.
+    schema: raw
+    tables:
+      - name: events
+        description: Loaded by warehouse/load.py. Reloading a day replaces that day's rows.
+        columns:
+          - name: arrived_on
+            description: Local day the file arrived (late events arrive after they happened).
+            data_tests: [not_null]
+          - name: line_no
+            data_tests: [not_null]
+          - name: body
+            description: The event as JSON, untouched.
+            data_tests: [not_null]

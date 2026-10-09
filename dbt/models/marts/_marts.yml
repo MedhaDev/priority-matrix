@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: fct_focus_sessions
+    description: One row per focus session with its task.
+    columns:
+      - name: pomodoro_id
+        data_tests: [unique, not_null]
+      - name: task_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_tasks')
+                field: task_id
+  - name: dim_tasks
+    description: One row per task.
+    columns:
+      - name: task_id
+        data_tests: [unique, not_null]
+  - name: daily_focus_metrics
+    description: Focus time per day and quadrant. Reconciled against the generator's answer key.
+    columns:
+      - name: day_quadrant_key
+        data_tests: [unique, not_null]
+      - name: focused_secs
+        data_tests: [not_null]
+  - name: weekly_focus_share
+    description: Each quadrant's share of the week's focus time (hypothesis 1 over time).
+  - name: h1_focus_by_quadrant
+    description: >
+      Hypothesis 1. focus_share = share of all focus time; list_share = share of task-days
+      on the to-do list; focus_vs_list > 1 means more focus than its share of the list.
+    columns:
+      - name: quadrant
+        data_tests: [unique, not_null]
+  - name: h2_urgent_tasks
+    description: Hypothesis 2, one row per task created as urgent.
+    columns:
+      - name: task_id
+        data_tests: [unique, not_null]
+  - name: h2_downgrade_summary
+    description: Hypothesis 2 in one row, with both denominators.
+  - name: data_quality_daily
+    description: Per arrival day, what came in and what staging had to fix.
+  - name: data_quality_summary
+    description: Pipeline-health measures for the dashboard.

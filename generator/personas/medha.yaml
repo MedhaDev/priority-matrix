@@ -1,0 +1,162 @@
+# ─────────────────────────────────────────────────────────────
+# Persona: Medha (simulated)
+#
+# A SIMULATED version of me, used because (1) my real data stays private
+# and (2) real data takes months to collect. Every event it produces is
+# synthetic. The habits below are my own estimates of how I work.
+#
+# Every setting is tagged:
+#   ✔ you         something I said about how I actually work
+#   ★ hypothesis  one of my two hypotheses, planted on purpose so the
+#                 pipeline has a known answer to recover
+#   ~ assumption  a placeholder guess: correct it if it's wrong
+#
+# Shares/mixes must add up to 1.0. Chances are between 0 and 1.
+# Ranges are [min, max] (whole numbers picked at random in between).
+# ─────────────────────────────────────────────────────────────
+
+persona:
+  name: Medha (simulated)
+  backstory: >
+    Research data management specialist at a university research center:
+    longitudinal survey data, cleaning pipelines, database schemas and a
+    cost-benefit analysis. Works in short bursts between requests and
+    meetings rather than long quiet blocks. Spends weekends on side
+    projects: this portfolio, and learning dbt, Airflow and applied AI.
+  timezone: America/New_York        # ✔ you (Pennsylvania)
+
+simulation:
+  start_date: 2026-06-10            # first simulated day
+  days: 120                         # ~4 months: enough for weekly trends
+  seed: 7                           # same seed → exactly the same data
+
+# ── Planning: how the to-do list fills up ──────────────────────
+planning:
+  new_tasks_per_day:
+    weekday: [4, 7]                 # ✔ you
+    weekend: [1, 3]                 # ✔ you (side projects, not zero)
+  monday_overcommit: 1.0            # ~ assumption: no Monday effect. Raise (e.g. 1.5) if Mondays pile up.
+  # Which quadrant a NEW task gets filed under when it's created.
+  create_mix: { do: 0.38, schedule: 0.30, delegate: 0.17, eliminate: 0.15 }   # ★ hypothesis 2 (urgent-heavy)
+  drop_after_days: 6                # ~ assumption: stale tasks may get deleted after this...
+  drop_chance: 0.5                  # ~ assumption: ...with this chance each morning
+
+# ── Hypothesis 2: urgency doesn't last ─────────────────────────
+urgency:
+  # Each morning, an urgent task (Do first / Delegate) from an earlier day
+  # has this chance of being moved to a non-urgent quadrant.
+  morning_downgrade_chance: 0.40    # ★ hypothesis 2
+  downgrade_to:
+    do: { schedule: 0.8, eliminate: 0.2 }          # ~ assumption
+    delegate: { eliminate: 0.7, schedule: 0.3 }    # ~ assumption
+
+# ── Hypothesis 1: focus goes to the urgent stuff ───────────────
+focus:
+  sessions_per_day:
+    weekday: [3, 6]                 # ~ assumption
+    weekend: [1, 3]                 # ✔ you (side projects)
+  quadrant_mix: { do: 0.66, schedule: 0.14, delegate: 0.12, eliminate: 0.08 }   # ★ hypothesis 1
+  # Focus sessions go to this kind of task when there is one (no Pomodoro for "Pay rent" at 1pm).
+  prefer_category: { weekday: work, weekend: side_project }   # ~ assumption
+  first_session_hour: [8, 11]       # ✔ you (scattered: no fixed start)
+  last_start_hour: 17               # ~ assumption
+  lunch: [12, 13]                   # ~ assumption
+  break_minutes: [10, 75]           # ✔ you (scattered: requests and meetings in between)
+  pause_chance: 0.20                # ✔ you (interruptions)
+  # Scattered focus: sessions get cut short by interruptions at any hour,
+  # not by a time-of-day slump, so morning and afternoon are the same.
+  abandon_chance: { morning: 0.22, afternoon: 0.22 }   # ✔ you (scattered) / ~ exact rate assumed
+  abandoned_after_minutes: [4, 20]  # ~ assumption
+
+# ── Finishing things ───────────────────────────────────────────
+completion:
+  after_focus_chance: 0.35          # ~ assumption: task ticked off right after a full session
+  # End-of-day sweep: chance an open task gets ticked off, by quadrant.
+  evening_chance: { do: 0.40, schedule: 0.12, delegate: 0.35, eliminate: 0.25 }   # ~ assumption
+  evening_hour: 18                  # ~ assumption
+  edit_chance: 0.05                 # ~ assumption: a task gets renamed during the day
+
+# ── What the tasks are about ───────────────────────────────────
+# Generic on purpose: this dataset is public, so no employer, colleague or
+# real project names. Edit freely. Each category needs tasks for all four
+# quadrants (the quadrant a task is CREATED in).
+task_mix:
+  weekday: { work: 0.80, side_project: 0.10, personal: 0.10 }   # ~ assumption
+  weekend: { work: 0.05, side_project: 0.65, personal: 0.30 }   # ✔ you (side projects)
+
+tasks:
+  work:
+    do:
+      - Fix failed survey import for the latest wave
+      - Answer PI question about variable coding
+      - QA cohort data before the export deadline
+      - Resolve duplicate participant IDs
+      - Send cleaned dataset to the analysis team
+      - Patch a broken validation rule in the intake form
+      - Pull numbers for the grant progress report
+      - Update partner cost inputs in the cost-benefit model
+    schedule:
+      - Document the survey cleaning pipeline
+      - Update the data dictionary
+      - Refactor the reshaping script for longitudinal data
+      - Write tests for the ingestion code
+      - Draft schema for the next study wave
+      - Review cost-benefit model assumptions
+      - Automate the weekly data QA report
+    delegate:
+      - Request database access for a new research assistant
+      - Ask IT about storage bucket permissions
+      - Schedule the data-sharing agreement call
+      - Collect sign-offs on codebook changes
+      - Book a room for the team data review
+    eliminate:
+      - Reformat an old slide deck
+      - Reorganize the shared drive again
+      - Read every department newsletter
+      - Tweak dashboard colors one more time
+  side_project:
+    do:
+      - Fix broken link on portfolio site
+      - Submit conference abstract before the deadline
+      - Finish job application before it closes
+    schedule:
+      - Learn dbt incremental models
+      - Build the Airflow DAG for the priority app
+      - Write the priority app case study
+      - Read about evaluating RAG systems
+      - Practice SQL window functions
+      - Sketch the Tableau dashboard layout
+    delegate:
+      - Ask a friend to review my resume
+      - Get feedback on the portfolio from a mentor
+    eliminate:
+      - Compare note-taking apps
+      - Redesign portfolio fonts again
+      - Rewatch old conference talks
+  personal:
+    do:
+      - Pay rent
+      - Renew parking permit
+      - Call landlord about the repair
+    schedule:
+      - Plan a weekend hike
+      - Edit photos from the last hike
+      - Book an annual checkup
+      - Sign up for a volunteer shift
+    delegate:
+      - Schedule car service
+      - Return the online order
+    eliminate:
+      - Organize the camera roll
+      - Scroll camera gear reviews
+
+# ── Realistic data problems, injected on purpose ───────────────
+# Each problem hits a separate set of events, and every affected event_id
+# is listed in manifest.json so the pipeline's checks can be verified.
+mess:
+  duplicate_rate: 0.010       # ~ assumption: phone retries an upload → same event twice
+  late_rate: 0.030            # ~ assumption: phone offline → event arrives days later
+  late_days: [1, 3]
+  dropped_rate: 0.002         # ~ assumption: event lost in transit → orphans downstream
+  naive_timestamp_rate: 0.002 # ~ assumption: client bug, timestamp without time zone
+  malformed_rate: 0.002       # ~ assumption: old app version sends a broken row

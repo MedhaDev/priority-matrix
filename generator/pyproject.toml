@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "priority-sim"
+version = "0.1.0"
+description = "Synthetic Priority Matrix users: simulated event logs with planted habits"
+requires-python = ">=3.9"
+dependencies = ["pyyaml>=6.0,<7"]
+
+[project.scripts]
+priority-sim = "priority_sim.cli:main"
+
+[tool.setuptools]
+packages = ["priority_sim"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

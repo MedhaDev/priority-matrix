@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Direction 2 — Almanac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f1ede4;
+    --ink: #1d1b17;
+    --muted: #6b655a;
+    --faint: #a49d90;
+    --rule: #1d1b17;
+    --hair: #d9d3c6;
+    --rust: #b4452a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font: 400 15px/1.5 "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+
+  /* masthead */
+  .mast { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 22px 0 14px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+  .mast .name { font-weight: 600; letter-spacing: 0.02em; }
+  .mast .issue { color: var(--muted); }
+  .mast nav { display: flex; justify-content: flex-end; gap: 24px; }
+  .mast nav a { color: var(--muted); }
+  .mast nav a.on { color: var(--ink); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+
+  /* lede */
+  .lede { display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: end; padding: 56px 0 44px; border-bottom: 1px solid var(--hair); }
+  h1 { font-size: 112px; line-height: 0.86; letter-spacing: -0.02em; }
+  h1 em { font-style: italic; color: var(--muted); }
+  .dateline { display: flex; gap: 14px; align-items: center; margin-bottom: 22px; font-size: 13px; color: var(--muted); }
+  .dateline button { width: 30px; height: 30px; border: 1px solid var(--hair); border-radius: 50%; display: grid; place-items: center; }
+  .dateline button:hover { border-color: var(--ink); color: var(--ink); }
+  .prose { font-size: 23px; line-height: 1.38; letter-spacing: -0.005em; }
+  .prose em { font-style: italic; }
+  .begin { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; font-size: 15px; font-weight: 500; padding: 12px 20px; background: var(--ink); color: var(--paper); border-radius: 2px; }
+  .begin .t { font-family: "Instrument Serif", serif; font-size: 19px; font-style: italic; font-weight: 400; color: #d9d3c6; }
+
+  /* write line */
+  .write { display: flex; align-items: baseline; gap: 18px; padding: 26px 0 22px; }
+  .write input { flex: 1; border: 0; border-bottom: 1px solid var(--ink); background: transparent; outline: none; padding: 6px 0 8px; font: 400 28px/1 "Instrument Serif", serif; color: var(--ink); }
+  .write input::placeholder { color: var(--faint); font-style: italic; }
+  .flag { font-size: 13px; color: var(--muted); padding-bottom: 2px; border-bottom: 1px solid transparent; }
+  .flag.on { color: var(--ink); border-bottom-color: var(--ink); }
+  .into { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .into i { font-family: "Instrument Serif", serif; font-size: 17px; color: var(--ink); }
+
+  /* matrix */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--rule); }
+  .q { padding: 26px 32px 30px 0; min-height: 270px; }
+  .q:nth-child(even) { padding: 26px 0 30px 32px; border-left: 1px solid var(--rule); }
+  .q:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+  .q-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+  .num { font-size: 12px; color: var(--muted); font-feature-settings: "tnum"; width: 22px; }
+  .q.do .num { color: var(--rust); }
+  .q-head h2 { font-size: 40px; line-height: 1; font-style: italic; letter-spacing: -0.01em; }
+  .q-head .sub { font-size: 13px; color: var(--muted); }
+  .q-head .tally { margin-left: auto; font-size: 13px; color: var(--muted); font-feature-settings: "tnum"; }
+
+  .task { display: grid; grid-template-columns: 22px 1fr auto; align-items: baseline; gap: 14px; padding: 10px 0; border-top: 1px solid var(--hair); }
+  .box { width: 13px; height: 13px; border: 1px solid var(--ink); position: relative; top: 1px; }
+  .done .box { background: var(--ink); }
+  .done .box::after { content: ""; position: absolute; left: 3.5px; top: 0.5px; width: 3.5px; height: 7px; border: solid var(--paper); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+  .t { font-size: 16px; }
+  .done .t { color: var(--faint); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .note { font-family: "Instrument Serif", serif; font-style: italic; font-size: 16px; color: var(--muted); white-space: nowrap; }
+  .note.late { color: var(--rust); }
+  .task:hover .t { text-decoration: underline; text-decoration-color: var(--hair); text-underline-offset: 4px; }
+  .done:hover .t { text-decoration: line-through; }
+
+  .colophon { display: flex; justify-content: space-between; padding: 30px 0 48px; margin-top: 8px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); }
+  .colophon nav { display: flex; gap: 22px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <span class="name">PRIORITY MATRIX</span>
+    <span class="issue">Day forty-one of keeping track</span>
+    <nav><a class="on">Today</a><a>Patterns</a><a>Archive</a></nav>
+  </header>
+
+  <section class="lede">
+    <div>
+      <div class="dateline">
+        <button aria-label="Previous day">‹</button>
+        <span>Thursday, 8 October 2026</span>
+        <button aria-label="Next day">›</button>
+      </div>
+      <h1 class="serif">Thursday,<br><em>the eighth.</em></h1>
+    </div>
+    <div>
+      <p class="prose serif">
+        Nine things on the list and three already done. You've given seventy-five minutes
+        to focus, nearly all of it to what felt urgent. The <em>Schedule</em> corner hasn't
+        been touched since Monday.
+      </p>
+      <a class="begin">Begin 25 minutes on <span class="t">Fix broken survey export</span> →</a>
+    </div>
+  </section>
+
+  <div class="write">
+    <input placeholder="Write a task…" />
+    <button class="flag on">urgent</button>
+    <button class="flag">important</button>
+    <span class="into">files under <i>Delegate</i></span>
+  </div>
+
+  <div class="grid">
+    <section class="q do">
+      <div class="q-head"><span class="num">I</span><h2 class="serif">Do first</h2><span class="sub">urgent, important</span><span class="tally">1 of 3</span></div>
+      <div class="task"><span class="box"></span><span class="t">Fix broken survey export</span><span class="note">fifty minutes in</span></div>
+      <div class="task"><span class="box"></span><span class="t">Prep slides for 2pm review</span><span class="note late">carried two days</span></div>
+      <div class="task done"><span class="box"></span><span class="t">Send numbers to finance</span><span class="note">at 9:58</span></div>
+    </section>
+    <section class="q">
+      <div class="q-head"><span class="num">II</span><h2 class="serif">Schedule</h2><span class="sub">important</span><span class="tally">0 of 3</span></div>
+      <div class="task"><span class="box"></span><span class="t">Read dbt docs: incremental models</span><span class="note late">carried four days</span></div>
+      <div class="task"><span class="box"></span><span class="t">Draft portfolio case study</span><span class="note"></span></div>
+      <div class="task"><span class="box"></span><span class="t">Plan Saturday hike</span><span class="note"></span></div>
+    </section>
+    <section class="q">
+      <div class="q-head"><span class="num">III</span><h2 class="serif">Delegate</h2><span class="sub">urgent</span><span class="tally">1 of 2</span></div>
+      <div class="task"><span class="box"></span><span class="t">Book a room for the meetup</span><span class="note">demoted from Do first</span></div>
+      <div class="task done"><span class="box"></span><span class="t">Ask IT about database access</span><span class="note">at 11:02</span></div>
+    </section>
+    <section class="q">
+      <div class="q-head"><span class="num">IV</span><h2 class="serif">Eliminate</h2><span class="sub">neither</span><span class="tally">1 of 1</span></div>
+      <div class="task done"><span class="box"></span><span class="t">Reorganize Notion (again)</span><span class="note">let go</span></div>
+    </section>
+  </div>
+
+  <footer class="colophon">
+    <span>Kept privately on this device.</span>
+    <nav><a>Export</a><a>Demo data</a><a>How it works</a><a>Medha Devalraj</a></nav>
+  </footer>
+</div>
+</body>
+</html>

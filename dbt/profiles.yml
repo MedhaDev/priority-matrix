@@ -1,0 +1,23 @@
+# Connection settings. No secrets here: everything sensitive comes from
+# environment variables (put them in the repo's git-ignored .env).
+#
+#   duckdb    local file, no server. Default for development, CI and Airflow.
+#   postgres  Supabase (or any Postgres): set PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE.
+priority_matrix:
+  target: "{{ env_var('DBT_TARGET', 'duckdb') }}"
+  outputs:
+    duckdb:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '../warehouse/priority.duckdb') }}"
+      schema: main
+      threads: 4
+    postgres:
+      type: postgres
+      host: "{{ env_var('PGHOST', 'localhost') }}"
+      port: "{{ env_var('PGPORT', '5432') | int }}"
+      user: "{{ env_var('PGUSER', 'postgres') }}"
+      password: "{{ env_var('PGPASSWORD', '') }}"
+      dbname: "{{ env_var('PGDATABASE', 'postgres') }}"
+      schema: analytics
+      sslmode: "{{ env_var('PGSSLMODE', 'prefer') }}"
+      threads: 4

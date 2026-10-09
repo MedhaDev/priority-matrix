@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: int_tasks
+    description: One row per task, including orphans whose task_created was lost (has_create_event = false).
+    columns:
+      - name: task_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [open, done, deleted]
+  - name: int_focus_sessions
+    description: One row per focus session. Quadrant and focus day come from the end event.
+    columns:
+      - name: pomodoro_id
+        data_tests: [unique, not_null]
+      - name: outcome
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [finished, abandoned, unfinished]
+  - name: int_task_days
+    description: One row per task per day it was on the list, with its quadrant that day.

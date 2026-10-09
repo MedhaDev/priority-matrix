@@ -1,0 +1,33 @@
+name: priority_matrix
+version: "1.0.0"
+config-version: 2
+profile: priority_matrix
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+clean-targets: ["target", "logs"]
+
+vars:
+  # Re-read this many days of raw data on incremental runs, to catch late and backfilled files.
+  lookback_days: 3
+  # Compare results with the generator's answer key (synthetic data only).
+  reconcile: true
+
+models:
+  priority_matrix:
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+      +materialized: table
+    marts:
+      +schema: marts
+      +materialized: table
+
+seeds:
+  priority_matrix:
+    +schema: reconciliation
