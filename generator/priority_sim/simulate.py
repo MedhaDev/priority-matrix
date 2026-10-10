@@ -8,7 +8,7 @@ Each day has three parts:
                a task that already exists                      ← hypothesis 1
   3. Evening   tick off a few more tasks
 
-Output: a list of events in exactly the app's format (contracts/event.v1.schema.json).
+Output: a list of events in exactly the app's format (docs/event.v1.schema.json).
 All randomness, including IDs, comes from one seeded generator, so the same
 persona + seed always produces exactly the same events.
 """

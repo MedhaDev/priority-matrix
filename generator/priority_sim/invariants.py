@@ -6,7 +6,7 @@ return none. The deliberately messy data (step 5) should trip specific codes,
 and each code maps to a dbt test in Phase 3.
 
 Codes
-  schema                 event doesn't match contracts/event.v1.schema.json
+  schema                 event doesn't match docs/event.v1.schema.json
   duplicate_event_id     the same event_id appears twice
   out_of_order           log isn't sorted by occurred_at
   local_date_mismatch    local_date isn't occurred_at's day in the event's time zone
@@ -35,7 +35,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 from zoneinfo import ZoneInfo
 
-SCHEMA_PATH = Path(__file__).resolve().parents[2] / "contracts" / "event.v1.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parents[2] / "docs" / "event.v1.schema.json"
 TASK_EVENTS = {"task_created", "task_edited", "task_moved", "task_completed", "task_reopened",
                "task_deleted", "task_carried_over"}
 ENDS = {"pomodoro_finished", "pomodoro_abandoned"}

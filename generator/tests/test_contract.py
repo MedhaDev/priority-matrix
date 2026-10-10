@@ -1,4 +1,4 @@
-"""The JSON Schema in contracts/ is the event contract. These tests pin down
+"""The JSON Schema in docs/ is the event contract. These tests pin down
 what it accepts and rejects, so it can't quietly drift."""
 import copy
 import json
@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator, FormatChecker
 
-SCHEMA_PATH = Path(__file__).resolve().parents[2] / "contracts" / "event.v1.schema.json"
+SCHEMA_PATH = Path(__file__).resolve().parents[2] / "docs" / "event.v1.schema.json"
 SCHEMA = json.loads(SCHEMA_PATH.read_text())
 VALIDATOR = Draft202012Validator(SCHEMA, format_checker=FormatChecker())
 

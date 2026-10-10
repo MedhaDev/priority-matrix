@@ -1,6 +1,6 @@
 {#
   Every delivered row, parsed, with the reason it breaks the event contract
-  (contracts/event.v1.schema.json), or null if it's fine. Nothing is dropped
+  (docs/event.v1.schema.json), or null if it's fine. Nothing is dropped
   here: valid rows flow to stg_events, invalid ones to stg_events__quarantine.
 #}
 {% set event_types = ['task_created', 'task_edited', 'task_moved', 'task_completed', 'task_reopened', 'task_deleted',

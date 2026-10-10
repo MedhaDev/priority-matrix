@@ -2,7 +2,7 @@
 
 Simulates a synthetic version of me ("Medha (simulated)") using the Priority Matrix app for months and
 writes their event log in exactly the app's format
-([contract](../contracts/event.v1.schema.json), [docs](../docs/event-schema.md)).
+([contract](../docs/event.v1.schema.json), [docs](../docs/event-schema.md)).
 
 The public pipeline and dashboard run on this data, never on my real data. The habits are my own estimates, tagged in the persona file as ✔ (I said so), ★ (planted hypothesis) or ~ (assumption to correct).
 

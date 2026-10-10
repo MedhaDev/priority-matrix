@@ -3,12 +3,12 @@
 Every action in the app is recorded as one **event**. The event log is the
 contract between three parts of this project:
 
-1. **The app** writes events (source: [`src/lib/events.js`](../src/lib/events.js)).
-2. **The synthetic generator** (Phase 2) produces events in exactly this format.
-3. **The dbt models** (Phase 3) read only this format.
+1. **The app** writes events (source: [`src/lib/events.js`](../app/src/lib/events.js)).
+2. **Synthetic data** (`generator/`), used in the public repo for privacy, follows exactly this format.
+3. **The dbt models** read only this format.
 
 Change all three together, and bump `schema_version` for breaking changes.
-The machine-checkable version is [`contracts/event.v1.schema.json`](../contracts/event.v1.schema.json) (JSON Schema).
+The machine-checkable version is [`event.v1.schema.json`](event.v1.schema.json) (JSON Schema).
 
 ## Fields
 
@@ -25,7 +25,7 @@ The machine-checkable version is [`contracts/event.v1.schema.json`](../contracts
 | `occurred_at` | timestamptz | Device clock, ISO 8601 UTC. |
 | `local_date` | date | The user's local calendar day when it happened. |
 | `timezone` | text | IANA name, e.g. `America/New_York`. |
-| `source` | text | `app` (live), `backfill` (converted from the old v1 app), `demo` (in-app demo), `synthetic` (the Phase 2 generator). |
+| `source` | text | `app` (live), `backfill` (converted from the old v1 app), `demo` (in-app demo), `synthetic` (the generator). |
 
 ## Event types
 

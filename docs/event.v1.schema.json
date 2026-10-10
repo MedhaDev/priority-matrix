@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/MedhaDev/priority-matrix/contracts/event.v1.schema.json",
+  "$id": "https://github.com/MedhaDev/priority-matrix/docs/event.v1.schema.json",
   "title": "Priority Matrix event (v1)",
   "description": "One user action. Shared contract between the app (src/lib/events.js), the synthetic generator (generator/) and the dbt models. Human-readable version: docs/event-schema.md.",
   "type": "object",
