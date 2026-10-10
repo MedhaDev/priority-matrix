@@ -97,7 +97,7 @@ with DAG(
     sunday = ShortCircuitOperator(task_id="is_sunday", python_callable=is_sunday_with_key)
     weekly_review = BashOperator(
         task_id="weekly_review",
-        bash_command=f"{WH} {ROOT / 'review' / 'weekly_review.py'} --week-ending {{{{ ds }}}}",
+        bash_command=f"{WH} {ROOT / 'warehouse' / 'weekly_review.py'} --week-ending {{{{ ds }}}}",
         env=ENV,
         doc_md="Optional: an AI-written review of the week's metrics (Phase 6).",
     )

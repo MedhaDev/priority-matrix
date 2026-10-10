@@ -1,7 +1,7 @@
 """Weekly review: the week's metrics, plus a short commentary written by Claude.
 
-  python review/weekly_review.py --week-ending 2026-10-04            # writes reviews/2026-W40.md
-  python review/weekly_review.py --week-ending 2026-10-04 --dry-run  # show the prompt, don't call the API
+  python warehouse/weekly_review.py --week-ending 2026-10-04            # writes reviews/2026-W40.md
+  python warehouse/weekly_review.py --week-ending 2026-10-04 --dry-run  # show the prompt, don't call the API
 
 Numbers come from SQL (the dbt marts) and are written by this script as a table.
 Claude only writes the commentary, and is told to use only the numbers it's given,
