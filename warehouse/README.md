@@ -47,19 +47,15 @@ Requires the generator's environment too (see `generator/README.md`).
   row, the hypothesis numbers must match, and the quarantine must contain exactly the rows the
   generator broke on purpose. Turned off for real data with `--vars '{reconcile: false}'`.
 
-Verified on both **DuckDB** (local, CI, Airflow) and **Postgres 16** (same engine as Supabase):
+Verified on both **DuckDB** (local, CI, Airflow) and **Postgres 16**:
 `PASS=54 WARN=2 ERROR=0`. Incremental day-by-day loads, including out-of-order days and
 backfills, produce exactly the same tables as a full rebuild.
 
-## Supabase (optional, synthetic data only)
+## Postgres (optional)
 
-1. Review and run `supabase/migrations/001_warehouse.sql` in the Supabase SQL Editor
-   (replace the placeholder password first). It creates the schemas, a `pipeline` role, and
-   locks everything away from the public API.
-2. Copy `.env.example` to `.env` and fill in the **Session pooler** connection
-   (Project Settings → Database). With the pooler, the user is `pipeline.<project-ref>`.
-3. Run with the Postgres target:
-   ```bash
-   set -a; source .env; set +a
-   WAREHOUSE_TARGET=postgres DBT_TARGET=postgres ./warehouse/run_pipeline.sh
-   ```
+The same models run on any Postgres. Fill in the `PG*` variables (see `.env.example`), then:
+
+```bash
+set -a; source .env; set +a
+WAREHOUSE_TARGET=postgres DBT_TARGET=postgres ./warehouse/run_pipeline.sh
+```

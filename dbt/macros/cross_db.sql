@@ -1,6 +1,6 @@
 {#-
   Small cross-database helpers, so the same models run on DuckDB (local, CI)
-  and Postgres (Supabase). Each macro dispatches to the adapter's version.
+  and Postgres. Each macro dispatches to the adapter's version.
 -#}
 
 {# Text value at a JSON path, e.g. json_str('body', 'payload.text') #}

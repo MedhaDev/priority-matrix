@@ -6,7 +6,7 @@
 #   ./warehouse/run_pipeline.sh 2026-09-15      # one arrival day, incremental (like Airflow)
 #
 # Uses each part's own virtual environment (see README). Set WAREHOUSE_TARGET=postgres
-# and DBT_TARGET=postgres (plus PG* variables) to run against Supabase instead.
+# and DBT_TARGET=postgres (plus PG* variables) to run against Postgres instead.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export DUCKDB_PATH="${DUCKDB_PATH:-$ROOT/warehouse/priority.duckdb}"

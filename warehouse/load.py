@@ -2,7 +2,7 @@
 
   python warehouse/load.py                          # every file in generator/data/raw → DuckDB
   python warehouse/load.py --date 2026-09-15        # one day (what Airflow runs)
-  python warehouse/load.py --target postgres        # Supabase / any Postgres (connection from env)
+  python warehouse/load.py --target postgres        # any Postgres (connection from env)
 
 raw.events keeps every delivered line exactly as received (as JSON), plus where
 it came from. Loading a day deletes that day's rows first, so reruns never

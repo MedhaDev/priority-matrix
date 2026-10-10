@@ -2,7 +2,7 @@
 # environment variables (put them in the repo's git-ignored .env).
 #
 #   duckdb    local file, no server. Default for development, CI and Airflow.
-#   postgres  Supabase (or any Postgres): set PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE.
+#   postgres  any Postgres: set PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE.
 priority_matrix:
   target: "{{ env_var('DBT_TARGET', 'duckdb') }}"
   outputs:
