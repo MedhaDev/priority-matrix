@@ -3,6 +3,7 @@
 // the dbt models) have something true to find.
 import { makeEvent, newId, replayEvents, sortEvents, isUrgent, POMODORO_SECS } from "./events";
 import { localDate, addDays, daysBetween } from "./dates";
+import { loadMode, saveData, saveMode } from "./storage";
 
 export const PERSONA = {
   days: 28,
@@ -160,4 +161,18 @@ export function generateDemo({ seed = 7, now = new Date() } = {}) {
 
   const sorted = sortEvents(events);
   return { tasks: replayEvents(sorted), events: sorted };
+}
+
+// A link ending in ?demo opens the app straight into demo mode (used for the
+// README's "Try the demo" link). Runs once, before the app renders.
+export function openDemoFromLink() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has("demo")) return;
+  if (loadMode() !== "demo") {
+    saveData("demo", generateDemo());
+    saveMode("demo");
+  }
+  params.delete("demo");
+  const query = params.toString();
+  history.replaceState(null, "", window.location.pathname + (query ? `?${query}` : "") + window.location.hash);
 }
