@@ -94,8 +94,8 @@ export function AboutModal({ onClose }) {
       </p>
       <p><b>Private by design.</b> No account, no server. Everything stays in this browser until you export it.</p>
       <p>
-        The event log feeds a data pipeline (Python → Postgres → dbt → Airflow → Tableau) that runs on a{" "}
-        <b>synthetic</b> person, so the public dashboard never shows anyone's real life.
+        The event log feeds a data pipeline (DuckDB → dbt → Airflow → Tableau). The public version uses
+        synthetic data, for privacy.
       </p>
       <p className="muted small">
         Shortcuts: <kbd>N</kbd> new task · <kbd>F</kbd> focus · <kbd>Space</kbd> start/pause · <kbd>Esc</kbd> close

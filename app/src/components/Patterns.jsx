@@ -94,7 +94,7 @@ export default function Patterns({ tasks, events, onLoadDemo, isDemo }) {
       </div>
 
       <p className="footnote">
-        An in-app preview. The full analysis runs as a data pipeline (Postgres → dbt → Airflow → Tableau) on synthetic data.
+        An in-app preview. The full analysis runs as a data pipeline (DuckDB → dbt → Airflow → Tableau).
       </p>
     </main>
   );
