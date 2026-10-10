@@ -1,67 +1,76 @@
 # Priority Matrix
 
-**An Eisenhower Matrix + Pomodoro app that records how I actually prioritize, and the data
-pipeline that analyzes it.**
+A to-do app that shows where your focus actually goes, and the data pipeline behind it.
 
-**Live app:** https://task-priority-tracker.netlify.app · **Case study:** [docs/case-study.md](docs/case-study.md)
+**Live app:** https://task-priority-tracker.netlify.app · [open with demo data](https://task-priority-tracker.netlify.app/?demo) · **[Case study](docs/case-study.md)**
 
-I suspected two things about how I work: that urgent-important tasks eat the focus meant for
-important-not-urgent ones, and that much of what I label "urgent" stops being urgent within days.
-This repo is the app that records the evidence and the pipeline that tests it.
+![The matrix: tasks sorted by urgent and important, with focus time and carry-overs](docs/images/app-matrix.png)
+
+<p>
+  <img src="docs/images/app-phone.png" alt="The app on a phone" width="21%">
+  &nbsp;
+  <img src="docs/images/app-patterns.png" alt="Patterns: where focus time goes and how long urgency lasts" width="76%">
+</p>
+
+## What the app does
+
+- **Matrix:** sort tasks into four boxes by urgent and important: Do first, Schedule,
+  Delegate, Eliminate. Unfinished tasks carry over to the next day.
+- **Focus:** work on a task in 25-minute sessions (Pomodoro), with pause and resume.
+- **Patterns:** see where your focus time went, and how often "urgent" tasks were downgraded
+  a few days later.
+- **Private:** no account and no server. Data stays on your device; export it any time.
+  Installable on a phone and works offline.
+
+Every action (task created, moved, finished, focus started, paused, abandoned) is saved as an
+event. That history is what makes the analysis possible.
+
+## The data pipeline
 
 ```mermaid
 flowchart LR
-  A[App · React PWA<br/>every action = an event<br/>real data stays on my phone]
-  G[Persona generator · Python<br/>simulated me, planted truth, realistic mess] --> F[Daily JSONL files]
-  F -->|idempotent load| R[(raw.events<br/>DuckDB / Supabase Postgres)]
-  R --> D[dbt<br/>staging → intermediate → marts<br/>tests + reconciliation]
-  D --> X[CSV + HTML dashboard<br/>Tableau Public]
-  AF[Airflow, daily] -.-> G & R & D & X
-  CI[GitHub Actions, every PR] -.-> G & D
-  C{{contracts/event.v1.schema.json}} --- A & G & D
+  A[My app data] --> B[(Database · DuckDB)] --> C[Clean, define metrics, test · dbt] --> D[Dashboard · Tableau]
 ```
 
-## What's here
+1. **Source:** the app's event log, in a documented format ([data contract](docs/event-schema.md)).
+2. **Load:** events go into a database, one day at a time.
+3. **Clean:** duplicates removed, bad timestamps repaired, broken rows set aside and counted.
+4. **Model:** SQL (dbt) turns events into metrics with written definitions, and 54 checks
+   confirm the numbers are right.
+5. **Report:** the metrics are exported for the dashboard. An AI tool writes a short weekly
+   summary from them.
 
-| Folder | What it is |
+Airflow runs these steps in order, and GitHub Actions re-runs every check when the code
+changes.
+
+> **Note:** for privacy, the data in this repo is synthetic, in the same format as the app's own
+> data.
+
+## Folders
+
+| Folder | |
 |---|---|
-| [`app/`](app/) | The web app (React + Vite). Installable on a phone, works offline, no account; data stays in the browser. Every action is logged as an event. |
-| [`contracts/`](contracts/) | The event format as JSON Schema: the contract between app, generator and warehouse ([docs](docs/event-schema.md)). |
-| [`generator/`](generator/) | "Medha (simulated)": a day-by-day simulation of my routine with both hypotheses planted, realistic data problems injected and counted, and an answer key. 80 tests. |
-| [`warehouse/`](warehouse/) + [`dbt/`](dbt/) | Loader, dbt project (DuckDB locally, Postgres/Supabase in production), 54 tests including reconciliation against the answer key. |
-| [`airflow/`](airflow/) | Daily DAG: generate → load → dbt seed/run/test → export (→ weekly review). |
-| [`review/`](review/) | Optional weekly review: numbers from SQL, short commentary from Claude. |
-| [`supabase/`](supabase/) | SQL to create the warehouse schemas on Supabase, locked away from the public API. |
-| [`docs/`](docs/) | [Case study](docs/case-study.md), [event schema](docs/event-schema.md), [dashboard guide](docs/dashboard.md). |
-| [`design/`](design/) | Design directions and mockups. |
-
-## Findings (synthetic data, Jun 10 – Oct 8)
-
-- **Do first gets 52% of focus time but is 14% of the to-do list: 3.6× its share.**
-  Schedule is 55% of the list and gets 28% of focus.
-- **62% of urgent tasks still open the next morning were later downgraded**, at a median of
-  1.0 day. Most lose their urgency at the very first morning review.
+| [`app/`](app/) | The app (React) |
+| [`generator/`](generator/) | Synthetic data in the app's format |
+| [`warehouse/`](warehouse/) | Loading, export and the weekly summary |
+| [`dbt/`](dbt/) | Cleaning, metric definitions and checks (SQL) |
+| [`airflow/`](airflow/) | The pipeline steps as a workflow |
+| [`docs/`](docs/) | [Case study](docs/case-study.md), [data contract](docs/event-schema.md), design work |
 
 ## Run it
 
+The app:
+
 ```bash
-# App
 cd app && npm install && npm run dev
-
-# Generator (Python 3.9+)
-python3 -m venv generator/.venv && generator/.venv/bin/pip install -r generator/requirements-dev.txt -e generator
-generator/.venv/bin/pytest generator -q
-
-# Warehouse + dbt: generate → load → build and test everything (DuckDB, no server)
-python3 -m venv warehouse/.venv && warehouse/.venv/bin/pip install -r warehouse/requirements.txt
-./warehouse/run_pipeline.sh
-warehouse/.venv/bin/python warehouse/export.py && warehouse/.venv/bin/python warehouse/build_dashboard.py
-open exports/dashboard.html
 ```
 
-Airflow and Supabase setup: [airflow/README.md](airflow/README.md), [warehouse/README.md](warehouse/README.md).
+The pipeline:
 
-## Privacy
+```bash
+python3 -m venv generator/.venv && generator/.venv/bin/pip install -U pip && generator/.venv/bin/pip install -e generator
+python3 -m venv warehouse/.venv && warehouse/.venv/bin/pip install -U pip && warehouse/.venv/bin/pip install -r warehouse/requirements.txt
+./warehouse/run_pipeline.sh
+```
 
-The app has no backend: my real tasks never leave my device unless I export them. Everything
-public here (dataset, warehouse, dashboard) is generated by the simulation.
+More in [warehouse/README.md](warehouse/README.md).
