@@ -4,12 +4,15 @@ A to-do app that shows where your focus actually goes, and the data pipeline beh
 
 **Live app:** https://task-priority-tracker.netlify.app · [open with demo data](https://task-priority-tracker.netlify.app/?demo) · **[Case study](docs/case-study.md)**
 
-![The matrix: tasks sorted by urgent and important, with focus time and carry-overs](docs/images/app-matrix.png)
-
 <p>
-  <img src="docs/images/app-phone.png" alt="The app on a phone" width="21%">
+  <img src="docs/images/app-matrix.png" alt="The matrix: tasks sorted by urgent and important, with focus time and carry-overs" width="77%">
   &nbsp;
-  <img src="docs/images/app-patterns.png" alt="Patterns: where focus time goes and how long urgency lasts" width="76%">
+  <img src="docs/images/app-phone.png" alt="The app on a phone" width="20%">
+</p>
+<p>
+  <img src="docs/images/app-patterns.png" alt="Patterns: where focus time goes and how long urgency lasts" width="48.5%">
+  &nbsp;
+  <img src="docs/images/app-how-it-works.png" alt="How it works: every action is saved as an event, and data stays on the device" width="48.5%">
 </p>
 
 ## What the app does
@@ -29,7 +32,12 @@ event. That history is what makes the analysis possible.
 
 ```mermaid
 flowchart LR
-  A[My app data] --> B[(Database · DuckDB)] --> C[Clean, define metrics, test · dbt] --> D[Dashboard · Tableau]
+  A[App · React<br/>every action saved as an event<br/>in one documented format] --> F[Daily event files]
+  subgraph AF [Airflow runs these steps in order]
+    F -->|load| R[(Database<br/>DuckDB)] --> D[dbt<br/>clean → model → metrics<br/>54 checks]
+  end
+  D --> X[Dashboard<br/>Tableau Public]
+  D --> W[Weekly summary<br/>written by an AI tool]
 ```
 
 1. **Source:** the app's event log, in a documented format ([data contract](docs/event-schema.md)).
