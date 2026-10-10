@@ -2,8 +2,8 @@
 
   python warehouse/build_dashboard.py        # → exports/dashboard.html
 
-The same views, colors and numbers as the Tableau Public dashboard
-(docs/dashboard.md), as one file that opens anywhere. Synthetic data only.
+The same views, colors and numbers as the Tableau Public dashboard,
+as one file that opens anywhere. Synthetic data only.
 """
 from __future__ import annotations
 
