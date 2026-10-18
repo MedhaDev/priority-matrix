@@ -128,6 +128,10 @@ export function convertV1(v1Tasks, v1Sessions) {
   return { tasks, events: sortEvents(events) };
 }
 
-// White noise during focus sessions: a device preference, not task data.
-export const loadNoisePref = () => read("pm2_noise", false) === true;
-export const saveNoisePref = (on) => write("pm2_noise", on);
+// Background sound during focus sessions ("off" or a sound id): a device
+// preference, not task data. Older versions stored true for white noise.
+export const loadNoisePref = () => {
+  const v = read("pm2_noise", "off");
+  return v === true ? "white" : typeof v === "string" ? v : "off";
+};
+export const saveNoisePref = (sound) => write("pm2_noise", sound);
