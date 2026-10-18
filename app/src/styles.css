@@ -225,12 +225,7 @@ kbd { font: 500 11px/1 var(--font); padding: 3px 5px; border-radius: 4px; border
 .focus-inner { width: 100%; max-width: 520px; min-height: 100%; display: flex; flex-direction: column; padding: max(20px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom)); }
 .focus-top { display: flex; justify-content: space-between; align-items: center; height: 48px; }
 .chip { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); padding: 6px 10px; background: var(--fill); border-radius: 8px; }
-.focus-tools { display: flex; align-items: center; gap: 6px; }
-.sound-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 8px; font-size: 13px; color: var(--muted); transition: background 0.12s, color 0.12s; }
-.sound-btn:hover { background: var(--fill); color: var(--ink); }
-.sound-btn.on { background: var(--fill); color: var(--ink); }
-.chip, .sound-btn { white-space: nowrap; }
-@media (max-width: 420px) { .sound-label { display: none; } .sound-btn { width: 32px; padding: 0; justify-content: center; } }
+.chip { white-space: nowrap; }
 .focus-mid { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 32px 0; }
 .focus .label { color: var(--muted); font-size: 14px; }
 .focus .task-name { font-size: 24px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.2; margin: 6px 0 34px; }
@@ -245,6 +240,16 @@ kbd { font: 500 11px/1 var(--font); padding: 3px 5px; border-radius: 4px; border
 .focus-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .focus-actions .btn { height: 52px; border-radius: 14px; font-size: 15.5px; }
 .focus-actions .wide { grid-column: 1 / -1; }
+.focus-actions.three { grid-template-columns: repeat(3, 1fr); }
+.focus-actions.three .btn { white-space: nowrap; padding: 0 6px; }
+@media (max-width: 420px) { .focus-actions.three .btn { font-size: 14.5px; } .focus-actions.three .btn:not(.wide) .ico { display: none; } }
+.focus-actions .btn .ico { margin-right: 2px; }
+.sounds { display: flex; align-items: center; gap: 2px; margin-top: 28px; color: var(--muted); }
+.sounds .ico { margin-right: 8px; }
+.sounds button { height: 34px; padding: 0 12px; border-radius: 8px; font-size: 14px; color: var(--muted); transition: background 0.12s, color 0.12s; }
+.sounds button:hover { color: var(--ink); }
+.sounds button.on { background: var(--fill); color: var(--ink); font-weight: 500; }
+@media (max-width: 420px) { .sounds button { padding: 0 9px; } }
 
 /* ── patterns ── */
 .patterns .intro { padding-bottom: 22px; }

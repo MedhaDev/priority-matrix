@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { quadrantLabel } from "../lib/events";
 import { fmtTime } from "../lib/dates";
-import { playNoise, stopNoise, unlockNoise } from "../lib/noise";
+import { SOUNDS, playNoise, stopNoise, unlockNoise } from "../lib/noise";
 import { loadNoisePref, saveNoisePref } from "../lib/storage";
 import Icon from "./Icon";
 
@@ -16,25 +16,27 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
   const [mm, ss] = split(remainingMs);
   const quadrant = task?.quadrant ?? active.quadrant;
   const name = task?.text ?? active.text;
-  const [noiseOn, setNoiseOn] = useState(loadNoisePref);
+  const [sound, setSound] = useState(loadNoisePref);
 
-  // White noise plays only while the timer runs.
+  // The background sound plays only while the timer runs.
   useEffect(() => {
-    if (noiseOn && status === "running") playNoise();
+    if (sound !== "off" && status === "running") playNoise(sound);
     else stopNoise();
-  }, [noiseOn, status]);
+  }, [sound, status]);
   useEffect(() => stopNoise, []);
 
-  const toggleNoise = () => {
-    if (!noiseOn) unlockNoise();
-    setNoiseOn(!noiseOn);
-    saveNoisePref(!noiseOn);
+  // Sound can only start from a tap or key press, so unlock it in each handler.
+  const withSound = (fn) => () => {
+    if (sound !== "off") unlockNoise();
+    fn();
   };
-  // Sound can only start from a tap or key press, so unlock it here.
-  const begin = () => {
-    if (noiseOn) unlockNoise();
-    focus.start();
+  const pickSound = (id) => {
+    if (id !== "off") unlockNoise();
+    setSound(id);
+    saveNoisePref(id);
   };
+  const begin = withSound(focus.start);
+  const restart = withSound(focus.restart);
 
   // Countdown in the browser tab / app switcher.
   useEffect(() => {
@@ -50,6 +52,10 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
         e.preventDefault();
         if (status === "running") focus.pause();
         else if (status === "ready" || status === "paused") begin();
+      }
+      if (e.key === "r" && (status === "running" || status === "paused") && e.target.tagName !== "INPUT") {
+        e.preventDefault();
+        restart();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -95,14 +101,9 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
       <div className="focus-inner">
         <div className="focus-top">
           {chip}
-          <div className="focus-tools">
-            <button className={`sound-btn${noiseOn ? " on" : ""}`} onClick={toggleNoise} aria-pressed={noiseOn} aria-label="White noise" title={noiseOn ? "Turn white noise off" : "Play white noise while focusing"}>
-              <Icon name={noiseOn ? "sound" : "mute"} size={16} /><span className="sound-label">White noise</span>
-            </button>
-            <button className="icon-btn" onClick={focus.close} aria-label={status === "ready" ? "Close" : "Exit (counts as abandoned)"} title={status === "ready" ? "Close" : "Exit · counts as abandoned"}>
-              <Icon name="x" size={18} />
-            </button>
-          </div>
+          <button className="icon-btn" onClick={focus.close} aria-label={status === "ready" ? "Close" : "Exit (counts as abandoned)"} title={status === "ready" ? "Close" : "Exit · counts as abandoned"}>
+            <Icon name="x" size={18} />
+          </button>
         </div>
         <div className="focus-mid">
           <span className="label">{status === "paused" ? "Paused" : status === "ready" ? "Ready to focus on" : "Focusing on"}</span>
@@ -113,13 +114,22 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
             <span>{started ? `Started ${fmtTime(started)}` : "25 minutes"}</span>
             <span>{endsAt ? `Ends ${fmtTime(endsAt)}` : status === "paused" ? "Timer paused" : "Space to start"}</span>
           </div>
+          <div className="sounds" role="radiogroup" aria-label="Background sound">
+            <Icon name={sound === "off" ? "mute" : "sound"} size={16} />
+            {[{ id: "off", label: "Off" }, ...SOUNDS].map((s) => (
+              <button key={s.id} role="radio" aria-checked={sound === s.id} className={sound === s.id ? "on" : ""} onClick={() => pickSound(s.id)}>
+                {s.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="focus-actions">
+        <div className="focus-actions three">
           {status === "running" && <button className="btn btn-primary wide" onClick={focus.pause}><Icon name="pause" size={14} />Pause</button>}
           {status === "paused" && <button className="btn btn-primary wide" onClick={begin}><Icon name="play" size={13} />Resume</button>}
           {status === "ready" && <button className="btn btn-primary wide" onClick={begin}><Icon name="play" size={13} />Start</button>}
           {status !== "ready" && (
             <>
+              <button className="btn btn-secondary" onClick={restart} title="Back to 25:00 (R)"><Icon name="restart" size={15} />Restart</button>
               <button className="btn btn-secondary" onClick={focus.finishEarly}>Finish early</button>
               <button className="btn btn-quiet" onClick={() => focus.abandon()}>Abandon</button>
             </>

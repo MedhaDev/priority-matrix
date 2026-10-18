@@ -98,7 +98,7 @@ export function AboutModal({ onClose }) {
         synthetic data, for privacy.
       </p>
       <p className="muted small">
-        Shortcuts: <kbd>N</kbd> new task · <kbd>F</kbd> focus · <kbd>Space</kbd> start/pause · <kbd>Esc</kbd> close
+        Shortcuts: <kbd>N</kbd> new task · <kbd>F</kbd> focus · <kbd>Space</kbd> start/pause · <kbd>R</kbd> restart · <kbd>Esc</kbd> close
       </p>
       <p className="muted small"><a href="https://github.com/MedhaDev/priority-matrix" target="_blank" rel="noreferrer">Source on GitHub ↗</a></p>
     </Dialog>

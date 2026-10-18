@@ -82,6 +82,17 @@ export function useFocus({ mode, tasks, log }) {
       log([event("pomodoro_paused", active)]);
       setActive({ ...active, acc_ms: active.acc_ms + (t - active.running_since), running_since: null });
     },
+    // Back to 25:00 and running. The interrupted session is logged as
+    // abandoned (reason "restarted") and a new one starts.
+    restart: () => {
+      const t = Date.now();
+      if (active.pomodoro_id) end("pomodoro_abandoned", { at: t, reason: "restarted" });
+      const base = fresh({ id: active.task_id, text: active.text, quadrant: active.quadrant });
+      const next = { ...base, pomodoro_id: newId(), running_since: t, started_at: new Date(t).toISOString() };
+      log([event("pomodoro_started", next, { payload: { planned_secs: next.planned_ms / 1000 } })]);
+      setNow(t);
+      setActive(next);
+    },
     finishEarly: () => end("pomodoro_finished", { early: true }),
     abandon: (reason = "gave_up") => end("pomodoro_abandoned", { reason }),
     // Leaving mid-session counts as abandoning it.

@@ -41,7 +41,7 @@ The machine-checkable version is [`event.v1.schema.json`](event.v1.schema.json) 
 | `pomodoro_started` | `planned_secs` |
 | `pomodoro_paused` / `pomodoro_resumed` | — |
 | `pomodoro_finished` | `focused_secs`, `planned_secs`, `early` |
-| `pomodoro_abandoned` | `focused_secs`, `planned_secs`, `reason` (`gave_up` · `exited` · `v1_paused_or_reset`) |
+| `pomodoro_abandoned` | `focused_secs`, `planned_secs`, `reason` (`gave_up` · `exited` · `restarted` · `v1_paused_or_reset`) |
 
 `focused_secs` excludes paused time.
 
