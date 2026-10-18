@@ -127,3 +127,7 @@ export function convertV1(v1Tasks, v1Sessions) {
 
   return { tasks, events: sortEvents(events) };
 }
+
+// White noise during focus sessions: a device preference, not task data.
+export const loadNoisePref = () => read("pm2_noise", false) === true;
+export const saveNoisePref = (on) => write("pm2_noise", on);

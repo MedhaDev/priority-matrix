@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { quadrantLabel } from "../lib/events";
 import { fmtTime } from "../lib/dates";
+import { playNoise, stopNoise, unlockNoise } from "../lib/noise";
+import { loadNoisePref, saveNoisePref } from "../lib/storage";
 import Icon from "./Icon";
 
 const pad = (n) => String(n).padStart(2, "0");
@@ -14,6 +16,25 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
   const [mm, ss] = split(remainingMs);
   const quadrant = task?.quadrant ?? active.quadrant;
   const name = task?.text ?? active.text;
+  const [noiseOn, setNoiseOn] = useState(loadNoisePref);
+
+  // White noise plays only while the timer runs.
+  useEffect(() => {
+    if (noiseOn && status === "running") playNoise();
+    else stopNoise();
+  }, [noiseOn, status]);
+  useEffect(() => stopNoise, []);
+
+  const toggleNoise = () => {
+    if (!noiseOn) unlockNoise();
+    setNoiseOn(!noiseOn);
+    saveNoisePref(!noiseOn);
+  };
+  // Sound can only start from a tap or key press, so unlock it here.
+  const begin = () => {
+    if (noiseOn) unlockNoise();
+    focus.start();
+  };
 
   // Countdown in the browser tab / app switcher.
   useEffect(() => {
@@ -28,12 +49,12 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
       if (e.key === " " && !["INPUT", "BUTTON"].includes(e.target.tagName)) {
         e.preventDefault();
         if (status === "running") focus.pause();
-        else if (status === "ready" || status === "paused") focus.start();
+        else if (status === "ready" || status === "paused") begin();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [focus, status]);
+  });
 
   const chip = (
     <span className="chip">
@@ -74,9 +95,14 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
       <div className="focus-inner">
         <div className="focus-top">
           {chip}
-          <button className="icon-btn" onClick={focus.close} aria-label={status === "ready" ? "Close" : "Exit (counts as abandoned)"} title={status === "ready" ? "Close" : "Exit · counts as abandoned"}>
-            <Icon name="x" size={18} />
-          </button>
+          <div className="focus-tools">
+            <button className={`sound-btn${noiseOn ? " on" : ""}`} onClick={toggleNoise} aria-pressed={noiseOn} aria-label="White noise" title={noiseOn ? "Turn white noise off" : "Play white noise while focusing"}>
+              <Icon name={noiseOn ? "sound" : "mute"} size={16} /><span className="sound-label">White noise</span>
+            </button>
+            <button className="icon-btn" onClick={focus.close} aria-label={status === "ready" ? "Close" : "Exit (counts as abandoned)"} title={status === "ready" ? "Close" : "Exit · counts as abandoned"}>
+              <Icon name="x" size={18} />
+            </button>
+          </div>
         </div>
         <div className="focus-mid">
           <span className="label">{status === "paused" ? "Paused" : status === "ready" ? "Ready to focus on" : "Focusing on"}</span>
@@ -90,8 +116,8 @@ export default function FocusOverlay({ focus, task, sessionsToday, onCompleteTas
         </div>
         <div className="focus-actions">
           {status === "running" && <button className="btn btn-primary wide" onClick={focus.pause}><Icon name="pause" size={14} />Pause</button>}
-          {status === "paused" && <button className="btn btn-primary wide" onClick={focus.start}><Icon name="play" size={13} />Resume</button>}
-          {status === "ready" && <button className="btn btn-primary wide" onClick={focus.start}><Icon name="play" size={13} />Start</button>}
+          {status === "paused" && <button className="btn btn-primary wide" onClick={begin}><Icon name="play" size={13} />Resume</button>}
+          {status === "ready" && <button className="btn btn-primary wide" onClick={begin}><Icon name="play" size={13} />Start</button>}
           {status !== "ready" && (
             <>
               <button className="btn btn-secondary" onClick={focus.finishEarly}>Finish early</button>
