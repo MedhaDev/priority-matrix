@@ -24,8 +24,8 @@ completed, carried over, and every focus session started, paused, finished or ab
 
 Product decisions that came from thinking about the data:
 
-- **Private by design.** No account, no server. Data stays on the device and leaves only when
-  exported.
+- **Private by default.** Works with no account: data stays on the device. Signing in syncs
+  tasks to the user's own account, protected by row-level security.
 - **Carry-over moves a task instead of copying it.** Copies would split one task's history into
   several unrelated tasks and make question 2 unmeasurable.
 - **Focus time comes from start and end times,** not a ticking counter, so it stays correct when
