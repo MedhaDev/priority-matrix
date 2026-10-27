@@ -63,7 +63,7 @@ export function ExportModal({ data, isDemo, onImport, onClose }) {
   return (
     <Dialog title="Your data" onClose={onClose}>
       <p className="muted">
-        {isDemo ? "Demo mode: this exports the simulated data." : "Everything lives in this browser."}{" "}
+        {isDemo ? "Demo mode: this exports the simulated data." : "A copy lives on this device."}{" "}
         {data.tasks.length} tasks · {data.events.length} events.
       </p>
       <div className="option-list">
@@ -92,7 +92,7 @@ export function AboutModal({ onClose }) {
         Sort tasks by <b>urgent</b> and <b>important</b>, focus on them in 25-minute sessions, and the app records
         every action as an event: created, moved, completed, focus started, paused, finished, abandoned.
       </p>
-      <p><b>Private by design.</b> No account, no server. Everything stays in this browser until you export it.</p>
+      <p><b>Yours.</b> Works without an account: everything is saved on this device. Sign in to sync your tasks to your own account, visible only to you.</p>
       <p>
         The event log feeds a data pipeline (DuckDB → dbt → Airflow → Tableau). The public version uses
         synthetic data, for privacy.

@@ -69,6 +69,14 @@ kbd { font: 500 11px/1 var(--font); padding: 3px 5px; border-radius: 4px; border
 /* ── demo banner ── */
 .demo-banner { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--ink); color: #e9e7e1; font-size: 12.5px; padding: 7px 16px; text-align: center; }
 .demo-banner button { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.sync-banner { display: flex; justify-content: center; align-items: center; gap: 14px; flex-wrap: wrap; background: #fbeee9; color: #8a3418; border-bottom: 1px solid #f1d5ca; font-size: 13px; padding: 8px 16px; text-align: center; }
+.sync-banner button { font-weight: 600; color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.account-form { display: grid; gap: 12px; margin-top: 6px; }
+.account-form label { display: grid; gap: 5px; font-size: 13px; color: var(--muted); }
+.account-form input { height: 42px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 9px; background: #fff; font-size: 16px; color: var(--ink); }
+.account-form input:focus { outline: none; border-color: #cfcbc2; box-shadow: 0 0 0 4px rgba(28, 27, 25, 0.05); }
+.account-form .dialog-actions { justify-content: space-between; margin-top: 6px; }
+.notice { font-size: 13px; color: var(--ink) !important; background: var(--fill); padding: 8px 10px; border-radius: 8px; }
 
 /* ── top bar ── */
 .top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 68px; }

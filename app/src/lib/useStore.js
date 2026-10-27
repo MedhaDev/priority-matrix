@@ -127,6 +127,9 @@ export function useStore(mode) {
       log(events) { apply(() => ({ events })); },
 
       replace(next) { setData(next); },
+
+      // Tasks arriving from cloud sync: no events, they were logged where the change happened.
+      setTasks(tasks) { setData((prev) => ({ ...prev, tasks })); },
     };
   }, [apply]);
 

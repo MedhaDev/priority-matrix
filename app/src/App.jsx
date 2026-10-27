@@ -12,6 +12,8 @@ import FocusOverlay from "./components/FocusOverlay";
 import Patterns from "./components/Patterns";
 import Icon, { Logo } from "./components/Icon";
 import { AboutModal, AddSheet, CarryOverModal, ExportModal } from "./components/Modals";
+import { AccountModal, SyncBanner } from "./components/Account";
+import { statusLine, useCloudSync } from "./lib/cloudSync";
 
 // Real data and demo data live under separate storage keys. Switching
 // remounts the whole app (via `key`), so the two can never mix.
@@ -77,6 +79,7 @@ function App({ mode, onSwitchMode }) {
   const isDemo = mode === "demo";
   const { tasks, events, actions } = useStore(mode);
   const focus = useFocus({ mode, tasks, log: actions.log });
+  const cloud = useCloudSync({ enabled: !isDemo, tasks, events, setTasks: actions.setTasks });
   const now = useClock();
   const today = localDate(new Date(now));
   const addRef = useRef(null);
@@ -84,7 +87,7 @@ function App({ mode, onSwitchMode }) {
   const [date, setDate] = useState(today);
   const [view, setView] = useView();
   const [menuId, setMenuId] = useState(null);
-  const [modal, setModal] = useState(null); // "export" | "about" | "add"
+  const [modal, setModal] = useState(null); // "export" | "about" | "add" | "account"
   const [drag, setDrag] = useState(NO_DRAG);
   const [carryIds, setCarryIds] = useState(() => {
     if (isDemo || carryAskedOn(mode) === today) return null;
@@ -163,6 +166,8 @@ function App({ mode, onSwitchMode }) {
         </div>
       )}
 
+      <SyncBanner cloud={cloud} />
+
       <div className="wrap">
         <header className="top">
           <button className="brand" onClick={() => setView("matrix")}><Logo />Priority</button>
@@ -234,8 +239,11 @@ function App({ mode, onSwitchMode }) {
         )}
 
         <footer className="foot">
-          <span>{isDemo ? "Simulated data" : "Saved on this device"} · {events.length.toLocaleString()} events</span>
+          <span>{isDemo ? "Simulated data" : statusLine(cloud)} · {events.length.toLocaleString()} events</span>
           <nav>
+            {cloud.available && !isDemo && (
+              <button onClick={() => setModal("account")}>{cloud.user ? "Account" : "Sign in to sync"}</button>
+            )}
             <button onClick={() => setModal("export")}>Export</button>
             <button onClick={() => onSwitchMode(isDemo ? "real" : "demo")}>{isDemo ? "Exit demo" : "Demo data"}</button>
             <button onClick={() => setModal("about")}>How it works</button>
@@ -278,6 +286,7 @@ function App({ mode, onSwitchMode }) {
         />
       )}
       {modal === "about" && <AboutModal onClose={() => setModal(null)} />}
+      {modal === "account" && <AccountModal cloud={cloud} onClose={() => setModal(null)} />}
     </>
   );
 }
