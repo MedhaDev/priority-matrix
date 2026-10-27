@@ -3,12 +3,12 @@
   --bg: #f3f2ee;
   --sheet: #fcfbf8;
   --ink: #1c1b19;
-  --muted: #6e6b65;
-  --faint: #a6a39c;
+  --muted: #595651;   /* secondary text: 6:1 or better on every background */
+  --faint: #6b6760;   /* tertiary text: 4.6:1 or better (WCAG AA) */
   --rule: #e4e1da;
   --fill: #ebe9e3;
   --hover: #f3f1ec;
-  --warn: #b0652d;
+  --warn: #985727;
   --danger: #b4432a;
 
   --do: #d4512f;
@@ -20,6 +20,15 @@
   --shadow-sheet: 0 1px 2px rgba(28, 27, 25, 0.04), 0 8px 24px -12px rgba(28, 27, 25, 0.08);
   --shadow-pop: 0 12px 32px -8px rgba(28, 27, 25, 0.22), 0 2px 6px rgba(28, 27, 25, 0.06);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Bright screens and "more contrast" settings (e.g. Windows contrast themes): darker greys and rules. */
+@media (prefers-contrast: more) {
+  :root { --muted: #45433f; --faint: #55524c; --warn: #7d4720; --rule: #c9c5bc; }
+}
+/* Windows High Contrast: keep the quadrant colour marks visible. */
+@media (forced-colors: active) {
+  .sq { forced-color-adjust: none; }
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
