@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import { exportJSON } from "./exportData";
+import { addDays, localDate } from "./dates";
 
 // Cloud sync for tasks (real mode, signed in).
 //
@@ -11,8 +12,13 @@ import { exportJSON } from "./exportData";
 // and a failed save stays pending (and visible) until it goes through.
 //
 // Events (the focus/behavior log) stay on the device; only tasks sync.
+//
+// Only recent tasks go to the cloud: on a device's first sign-in, tasks
+// dated in the last 7 days or later are uploaded. Older tasks stay on the
+// device and are never sent (unless one is carried over to a recent day).
 
-const SNAPSHOT_KEY = "pm2_cloud_snapshot";   // { user_id, rows: { [task id]: serialized } }
+const SNAPSHOT_KEY = "pm2_cloud_snapshot";   // { user_id, since, rows: { [task id]: serialized } }
+const HISTORY_DAYS = 7;
 const BACKUP_KEY = "pm2_pre_cloud_backup";   // frozen copy of local data before the first sync
 const RETRY_SECS = [5, 15, 30, 60];
 
@@ -64,11 +70,13 @@ const ser = (t, position) => JSON.stringify([
 ]);
 
 // What differs between this device and the last state the cloud confirmed.
-function changesOf(tasks, rows) {
+// Tasks older than `since` that were never uploaded stay on the device.
+function changesOf(tasks, rows, since = "") {
   const seen = new Set();
   const upserts = [];
   tasks.forEach((t, i) => {
     seen.add(t.id);
+    if (rows[t.id] === undefined && t.date < since) return;
     const s = ser(t, i);
     if (rows[t.id] !== s) upserts.push({ t, i, s });
   });
@@ -84,7 +92,7 @@ export function useCloudSync({ enabled, tasks, events, setTasks }) {
   const eventsRef = useRef(events);
   useEffect(() => { tasksRef.current = tasks; eventsRef.current = events; });
 
-  const snapRef = useRef({ user_id: null, rows: {} });
+  const snapRef = useRef({ user_id: null, since: "", rows: {} });
   const queue = useRef(Promise.resolve());
   const retry = useRef({ timer: null, attempt: 0 });
   const debounce = useRef(null);
@@ -106,7 +114,7 @@ export function useCloudSync({ enabled, tasks, events, setTasks }) {
   }, []);
 
   const fail = useCallback((err, flushLater) => {
-    const { upserts, deletes } = changesOf(tasksRef.current, snapRef.current.rows);
+    const { upserts, deletes } = changesOf(tasksRef.current, snapRef.current.rows, snapRef.current.since);
     const offline = typeof navigator !== "undefined" && navigator.onLine === false;
     setState({ status: offline ? "offline" : "error", pending: upserts.length + deletes.length, error: err?.message ?? String(err) });
     clearTimeout(retry.current.timer);
@@ -120,7 +128,7 @@ export function useCloudSync({ enabled, tasks, events, setTasks }) {
     const rows = snapRef.current.rows;
     try {
       for (;;) {
-        const { upserts, deletes } = changesOf(tasksRef.current, rows);
+        const { upserts, deletes } = changesOf(tasksRef.current, rows, snapRef.current.since);
         if (!upserts.length && !deletes.length) break;
         if (navigator.onLine === false) throw new Error("offline");
         setState((s) => ({ ...s, status: "syncing", pending: upserts.length + deletes.length }));
@@ -175,7 +183,7 @@ export function useCloudSync({ enabled, tasks, events, setTasks }) {
       out.push({ task: t, pos: i });
     }
     out.sort((a, b) => a.pos - b.pos);
-    snapRef.current = { user_id: userId, rows };
+    snapRef.current = { ...snapRef.current, user_id: userId, rows };
     write(SNAPSHOT_KEY, snapRef.current);
     const next = out.map((o) => o.task);
     tasksRef.current = next;
@@ -195,7 +203,7 @@ export function useCloudSync({ enabled, tasks, events, setTasks }) {
       if (data.tasks.length) exportJSON(data);
       // Tasks synced to a different account before must not move into this one.
       if (stored?.user_id) { tasksRef.current = []; setTasks([]); }
-      snapRef.current = { user_id: userId, rows: {} };
+      snapRef.current = { user_id: userId, since: addDays(localDate(), -HISTORY_DAYS), rows: {} };
     }
     pull().then(() => flush());
   }, [active, userId, pull, flush, setTasks]);

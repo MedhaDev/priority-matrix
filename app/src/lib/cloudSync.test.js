@@ -51,9 +51,12 @@ vi.mock("./supabase", () => {
 
 import { exportJSON } from "./exportData";
 import { useCloudSync } from "./cloudSync";
+import { addDays, localDate } from "./dates";
+
+const TODAY = localDate();
 
 const task = (id, text, extra = {}) => ({
-  id, text, quadrant: "do", done: false, date: "2026-10-26",
+  id, text, quadrant: "do", done: false, date: TODAY,
   subtasks: [{ id: `${id}-s`, text: "step", done: false }],
   created_at: "2026-10-26T09:00:00.000Z", completed_at: null, ...extra,
 });
@@ -80,7 +83,7 @@ describe("cloud sync", () => {
     const { result } = setup([task("a", "Write report"), task("b", "Call bank", { done: true, completed_at: "2026-10-26T10:00:00.000Z" })]);
     await synced(result);
     expect(db.rows.size).toBe(2);
-    expect(db.rows.get("a")).toMatchObject({ user_id: "user-1", title: "Write report", status: "open", task_date: "2026-10-26" });
+    expect(db.rows.get("a")).toMatchObject({ user_id: "user-1", title: "Write report", status: "open", task_date: TODAY });
     expect(db.rows.get("b")).toMatchObject({ status: "done" });
     expect(JSON.parse(localStorage.getItem("pm2_pre_cloud_backup")).tasks).toHaveLength(2);
     expect(exportJSON).toHaveBeenCalledTimes(1);
@@ -143,6 +146,22 @@ describe("cloud sync", () => {
     await synced(result);
     expect(result.current.tasks[0].text).toBe("Edited here");
     expect(db.rows.get("a").title).toBe("Edited here");
+  });
+
+  it("uploads only the last 7 days; older tasks stay on the device", async () => {
+    const { result } = setup([
+      task("old", "From two weeks ago", { date: addDays(TODAY, -14) }),
+      task("edge", "From exactly a week ago", { date: addDays(TODAY, -7) }),
+      task("now", "Today"),
+      task("next", "Tomorrow", { date: addDays(TODAY, 1) }),
+    ]);
+    await synced(result);
+    expect([...db.rows.keys()].sort()).toEqual(["edge", "next", "now"]);
+    expect(result.current.tasks.map((t) => t.id)).toEqual(["old", "edge", "now", "next"]);
+
+    // Carrying the old task over to today makes it current, so it syncs.
+    act(() => result.current.setTasks(result.current.tasks.map((t) => (t.id === "old" ? { ...t, date: TODAY } : t))));
+    await waitFor(() => expect(db.rows.get("old")?.task_date).toBe(TODAY));
   });
 
   it("doesn't move one account's tasks into another account", async () => {
